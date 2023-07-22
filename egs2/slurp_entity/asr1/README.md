@@ -1,3 +1,22 @@
+# E-Branchformer
+
+- ASR config: [conf/tuning/train_asr_e_branchformer_e12_mlp3072_linear1024_layerdrop.yaml](conf/tuning/train_asr_e_branchformer_e12_mlp3072_linear1024_layerdrop.yaml)
+- Params: 110.21M
+- Model link: [https://huggingface.co/pyf98/slurp_entity_e_branchformer](https://huggingface.co/pyf98/slurp_entity_e_branchformer)
+
+### Intent Classification
+
+- Valid Intent Classification Result: 0.8781357882623706
+- Test Intent Classification Result: 0.8743691695977979
+
+### Entity
+
+|Slu f1|Precision|Recall|F-Measure|
+|:---:|:---:|:---:|:---:|
+| test | 0.7940 | 0.7582 | 0.7757 |
+
+
+
 # Branchformer: init
 
 - ASR config: [conf/tuning/train_asr_branchformer_e18_d6_size512_lr1e-3_warmup35k.yaml](conf/tuning/train_asr_branchformer_e18_d6_size512_lr1e-3_warmup35k.yaml)
@@ -50,8 +69,8 @@
 
 # Using XLS-R pretrained speech Encoder and mBART-50 Large pretrained text Encoder-Decoder
 
-- ASR config: [conf/tuning/train_asr_branchformer_xlsr_mbart.yaml](conf/tuning/train_asr_branchformer_xlsr_mbart.yaml)
-- #Params: 1.21 B
+- Recipe shell script: [local/run_hf.sh](local/run_hf.sh)
+- Model link: [https://zenodo.org/record/7377716#.Y4YlX9LMJp8](https://zenodo.org/record/7377716#.Y4YlX9LMJp8)
 
 ## Environments
 - date: `Wed Sep  7 01:16:08 CEST 2022`

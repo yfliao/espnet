@@ -57,10 +57,46 @@ TTS recipe consists of 9 stages.
 ### 1. Data preparation
 
 Data preparation stage.
+You have two methods to generate the data:
+
+#### ESPnet format:
+
 It calls `local/data.sh` to creates Kaldi-style data directories in `data/` for training, validation, and evaluation sets.
 
 See also:
 - [About Kaldi-style data directory](https://github.com/espnet/espnet/tree/master/egs2/TEMPLATE#about-kaldi-style-data-directory)
+
+#### (New) MFA Aligments generation
+
+You can generate aligments using the [Montreal-Forced-Aligner tool](https://github.com/MontrealCorpusTools/Montreal-Forced-Aligner)
+Use the script `scripts/mfa.sh` to generate the required mfa aligments and train a model that employs these alignments.
+
+Because the script `scripts/mfa.sh` prepares the data, it is not required to execute `local/data.sh` previously. However, you will
+need to set some additional flags, such as `--split_sets`, `--samplerate`, or `--acoustic_model`:
+
+```bash
+./scripts/mfa.sh --split_sets "train_set dev_set test_set" \
+    --stage 1 \
+    --stop-stage 2 \
+    --train true --nj 36 --g2p_model espeak_ng_english_vits
+```
+
+You can find a reference at `egs2/ljspeech/tts1/local/run_mfa.sh`.
+
+The script `scripts/mfa.sh` will generate the aligments using a given `g2p_model` & `acoustic_model` and store it in the `<split_sets>_phn` directory.
+This script download a pretrained model (if `--train false`) or trains the mfa g2p and acoustic model (if `--train true`), for then generate the aligments.
+
+Then, you can continue the training on the main script:
+
+```bash
+./run.sh --train-set train_set_phn \
+         --dev-set dev_set_phn \
+         --test_sets "dev_set_phn test_set_phn" \
+         --stage 2 \
+         --g2p none \
+         --cleaner none \
+         --teacher_dumpdir "data"
+```
 
 ### 2. Wav dump / Embedding preparation
 
@@ -299,7 +335,25 @@ tts_conf:
     spk_embed_dim: 512               # dimension of speaker embedding
     spk_embed_integration_type: add  # how to integrate speaker embedding
 ```
-Please run the training from stage 6.
+
+#### (Optional) Train on speaker-averaged X-vectors
+
+Models trained using speaker-averaged X-vectors may generalise better to inference tasks where the utterance-specific xvector is unknown, compared to models trained using embeddings derived from individual training utterances.
+After you perform the above extraction step, if you want to train and evaluate using speaker-averaged X-vectors you can use the following command to replace utterance-level X-vectors with speaker-averaged values. Make sure to set your `train_set` `dev_set` and `test_set` variables beforehand:
+```
+for dset in "${train_set}" "${dev_set}" "${test_set}"
+do
+    ./pyscripts/utils/convert_to_avg_xvectors.py \
+        --xvector-path dump/xvector/${dset}/xvector.scp \
+        --utt2spk data/${dset}/utt2spk \
+        --spk-xvector-path dump/xvector/${dset}/spk_xvector.scp
+done
+```
+The original xvector.scp files are renamed to xvector.scp.bak in case you wish to revert the changes.
+
+---
+
+Once you've performed extraction and optionally the speaker-averaged replacement step, please run the training from stage 6.
 ```sh
 $ ./run.sh --stage 6 --use_xvector true --train_config /path/to/your_xvector_config.yaml
 ```
@@ -552,11 +606,13 @@ You can find the example configs in:
 
 ### Evaluation
 
-We provide three objective evaluation metrics:
+We provide five objective evaluation metrics:
 
 - Mel-cepstral distortion (MCD)
 - Log-F0 root mean square error (log-F0 RMSE)
 - Character error rate (CER)
+- Conditional Fréchet Speech Distance (CFSD)
+- Speaker Embedding Cosine Similarity (SECS)
 
 MCD and log-F0 RMSE reflect speaker, prosody, and phonetic content similarities, and CER can reflect the intelligibility.
 For MCD and log-F0 RMSE, we apply dynamic time-warping (DTW) to match the length difference between ground-truth speech and generated speech.
@@ -593,8 +649,16 @@ cd egs2/<recipe_name>/tts1
     exp/<model_dir_name>/<decode_dir_name>/eval1/wav/wav.scp \
     exp/<model_dir_name>/<decode_dir_name>/asr_results
 
+# You can also use openai whisper for evaluation
+./scripts/utils/evaluate_asr.sh \
+    --whisper_tag base \
+    --nj 1 \
+    --gt_text "dump/raw/eval1/text" \
+    exp/<model_dir_name>/<decode_dir_name>/eval1/wav/wav.scp \
+    exp/<model_dir_name>/<decode_dir_name>/asr_results
+
 # Since ASR model does not use punctuation, it is better to remove punctuations if it contains
-./utils/remove_punctuation.pl < dump/raw/eval1/text > dump/raw/eval1/text.no_punc
+./scripts/utils/remove_punctuation.pl < dump/raw/eval1/text > dump/raw/eval1/text.no_punc
 ./scripts/utils/evaluate_asr.sh \
     --model_tag <asr_model_tag> \
     --nj 1 \
@@ -615,6 +679,16 @@ awk < "exp/<model_dir_name>/<decode_dir_name>/eval1/wav/wav.scp" \
     --gt_text "dump/raw/eval1/text.no_punc" \
     exp/<model_dir_name>/<decode_dir_name>/eval1/wav/wav_pad.scp \
     exp/<model_dir_name>/<decode_dir_name>/asr_results
+
+# Evaluate CFSD
+./pyscripts/utils/evaluate_cfsd.py \
+    exp/<model_dir_name>/<decode_dir_name>/eval1/wav/wav.scp \
+    dump/raw/eval1/wav.scp
+
+# Evaluate SECS
+./pyscripts/utils/evaluate_secs.py \
+    exp/<model_dir_name>/<decode_dir_name>/eval1/wav/wav.scp \
+    dump/raw/eval1/wav.scp
 
 ```
 
@@ -972,4 +1046,3 @@ This is because we use prenet in the decoder, which always applies dropout.
 See more info in [Tacotron2 paper](https://arxiv.org/abs/1712.05884).
 
 If you want to fix the results, you can use [`--always_fix_seed` option](https://github.com/espnet/espnet/blob/f03101557753517ebac8c432f0793d97d68fa5f0/espnet2/bin/tts_inference.py#L601-L606).
-

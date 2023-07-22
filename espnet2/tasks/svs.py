@@ -10,6 +10,8 @@ import torch
 import yaml
 from typeguard import check_argument_types, check_return_type
 
+from espnet2.gan_svs.joint import JointScore2Wav
+from espnet2.gan_svs.vits import VITS
 from espnet2.layers.abs_normalize import AbsNormalize
 from espnet2.layers.global_mvn import GlobalMVN
 from espnet2.svs.abs_svs import AbsSVS
@@ -20,6 +22,14 @@ from espnet2.svs.feats_extract.score_feats_extract import (
 )
 from espnet2.svs.naive_rnn.naive_rnn import NaiveRNN
 from espnet2.svs.naive_rnn.naive_rnn_dp import NaiveRNNDP
+
+# TODO(Yuning): Models to be added
+from espnet2.svs.singing_tacotron.singing_tacotron import singing_tacotron
+from espnet2.svs.xiaoice.XiaoiceSing import XiaoiceSing
+
+# from espnet2.svs.encoder_decoder.transformer.transformer import Transformer
+# from espnet2.svs.mlp_singer.mlp_singer import MLPSinger
+# from espnet2.svs.glu_transformer.glu_transformer import GLU_Transformer
 from espnet2.tasks.abs_task import AbsTask
 from espnet2.train.class_choices import ClassChoices
 from espnet2.train.collate_fn import CommonCollateFn
@@ -28,14 +38,11 @@ from espnet2.train.trainer import Trainer
 from espnet2.tts.feats_extract.abs_feats_extract import AbsFeatsExtract
 from espnet2.tts.feats_extract.dio import Dio
 from espnet2.tts.feats_extract.energy import Energy
+from espnet2.tts.feats_extract.linear_spectrogram import LinearSpectrogram
 from espnet2.tts.feats_extract.log_mel_fbank import LogMelFbank
 from espnet2.tts.feats_extract.log_spectrogram import LogSpectrogram
+from espnet2.tts.feats_extract.ying import Ying
 
-# TODO(Yuning): Models to be added
-# from espnet2.svs.encoder_decoder.transformer.transformer import Transformer
-# from espnet2.svs.mlp_singer.mlp_singer import MLPSinger
-# from espnet2.svs.glu_transformer.glu_transformer import GLU_Transformer
-# from espnet2.svs.xiaoice.XiaoiceSing import XiaoiceSing
 # from espnet2.svs.xiaoice.XiaoiceSing import XiaoiceSing_noDP
 # from espnet2.svs.bytesing.bytesing import ByteSing
 from espnet2.tts.utils import ParallelWaveGANPretrainedVocoder
@@ -48,7 +55,11 @@ from espnet2.utils.types import int_or_none, str2bool, str_or_none
 
 feats_extractor_choices = ClassChoices(
     "feats_extract",
-    classes=dict(fbank=LogMelFbank, spectrogram=LogSpectrogram),
+    classes=dict(
+        fbank=LogMelFbank,
+        spectrogram=LogSpectrogram,
+        linear_spectrogram=LinearSpectrogram,
+    ),
     type_check=AbsFeatsExtract,
     default="fbank",
 )
@@ -90,6 +101,13 @@ pitch_normalize_choices = ClassChoices(
     default=None,
     optional=True,
 )
+ying_extractor_choices = ClassChoices(
+    "ying_extract",
+    classes=dict(ying=Ying),
+    type_check=AbsFeatsExtract,
+    default=None,
+    optional=True,
+)
 energy_normalize_choices = ClassChoices(
     "energy_normalize",
     classes=dict(global_mvn=GlobalMVN),
@@ -105,12 +123,15 @@ svs_choices = ClassChoices(
         # bytesing=ByteSing,
         naive_rnn=NaiveRNN,
         naive_rnn_dp=NaiveRNNDP,
-        # mlp=MLPSinger,
-        # xiaoice=XiaoiceSing,
+        xiaoice=XiaoiceSing,
         # xiaoice_noDP=XiaoiceSing_noDP,
+        vits=VITS,
+        joint_score2wav=JointScore2Wav,
+        # mlp=MLPSinger,
+        singing_tacotron=singing_tacotron,
     ),
     type_check=AbsSVS,
-    default="transformer",
+    default="naive_rnn",
 )
 
 
@@ -131,6 +152,8 @@ class SVSTask(AbsTask):
         pitch_extractor_choices,
         # --pitch_normalize and --pitch_normalize_conf
         pitch_normalize_choices,
+        # --ying_extract and --ying_extract_conf
+        ying_extractor_choices,
         # --energy_extract and --energy_extract_conf
         energy_extractor_choices,
         # --energy_normalize and --energy_normalize_conf
@@ -263,8 +286,7 @@ class SVSTask(AbsTask):
                 text_cleaner=args.cleaner,
                 g2p_type=args.g2p,
                 fs=args.fs,
-                time_shift=args.feats_extract_conf["hop_length"]
-                / args.feats_extract_conf["fs"],
+                hop_length=args.feats_extract_conf["hop_length"],
             )
         else:
             retval = None
@@ -272,16 +294,15 @@ class SVSTask(AbsTask):
         # assert check_return_type(retval)
         return retval
 
-    # TODO(Yuning): check new names
     @classmethod
     def required_data_names(
         cls, train: bool = True, inference: bool = False
     ) -> Tuple[str, ...]:
         if not inference:
-            retval = ("text", "singing", "midi", "label")
+            retval = ("text", "singing", "score", "label")
         else:
             # Inference mode
-            retval = ("text", "midi", "label")
+            retval = ("text", "score", "label")
         return retval
 
     @classmethod
@@ -289,10 +310,19 @@ class SVSTask(AbsTask):
         cls, train: bool = True, inference: bool = False
     ) -> Tuple[str, ...]:
         if not inference:
-            retval = ("spembs", "durations", "pitch", "energy", "sids", "lids")
+            retval = (
+                "spembs",
+                "durations",
+                "pitch",
+                "energy",
+                "sids",
+                "lids",
+                "feats",
+                "ying",
+            )
         else:
             # Inference mode
-            retval = ("spembs", "singing", "durations", "sids", "lids")
+            retval = ("spembs", "singing", "pitch", "durations", "sids", "lids")
         return retval
 
     @classmethod
@@ -340,6 +370,7 @@ class SVSTask(AbsTask):
         # 4. Extra components
         score_feats_extract = None
         pitch_extract = None
+        ying_extract = None
         energy_extract = None
         pitch_normalize = None
         energy_normalize = None
@@ -362,6 +393,14 @@ class SVSTask(AbsTask):
                     "reduction_factor", 1
                 )
             pitch_extract = pitch_extract_class(**args.pitch_extract_conf)
+        if getattr(args, "ying_extract", None) is not None:
+            ying_extract_class = ying_extractor_choices.get_class(
+                args.ying_extract,
+            )
+
+            ying_extract = ying_extract_class(
+                **args.ying_extract_conf,
+            )
         if getattr(args, "energy_extract", None) is not None:
             if args.energy_extract_conf.get("reduction_factor", None) is not None:
                 assert args.energy_extract_conf.get(
@@ -393,8 +432,8 @@ class SVSTask(AbsTask):
             score_feats_extract=score_feats_extract,
             label_extract=score_feats_extract,
             pitch_extract=pitch_extract,
-            tempo_extract=score_feats_extract,
-            beat_extract=score_feats_extract,
+            ying_extract=ying_extract,
+            duration_extract=score_feats_extract,
             energy_extract=energy_extract,
             normalize=normalize,
             pitch_normalize=pitch_normalize,
@@ -413,7 +452,6 @@ class SVSTask(AbsTask):
         model: Optional[ESPnetSVSModel] = None,
         device: str = "cpu",
     ):
-
         logging.info(f"vocoder_config_file: {vocoder_config_file}")
         logging.info(f"vocoder_file: {vocoder_file}")
 

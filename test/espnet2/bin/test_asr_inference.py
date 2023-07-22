@@ -47,6 +47,8 @@ def asr_config_file(tmp_path: Path, token_list):
             str(token_list),
             "--token_type",
             "char",
+            "--decoder",
+            "rnn",
         ]
     )
     return tmp_path / "asr" / "config.yaml"
@@ -214,6 +216,8 @@ def enh_asr_config_file(tmp_path: Path, token_list):
             str(token_list),
             "--token_type",
             "char",
+            "--asr_decoder",
+            "rnn",
         ]
     )
     return tmp_path / "enh_asr" / "config.yaml"
@@ -291,3 +295,87 @@ def test_Speech2Text_hugging_face(
         assert isinstance(token[0], str)
         assert isinstance(token_int[0], int)
         assert isinstance(hyp, Hypothesis)
+
+
+@pytest.fixture()
+def asr_config_file_pit(tmp_path: Path, token_list):
+    # Write default configuration file
+    ASRTask.main(
+        cmd=[
+            "--dry_run",
+            "true",
+            "--output_dir",
+            str(tmp_path / "asr_pit"),
+            "--token_list",
+            str(token_list),
+            "--token_type",
+            "char",
+            "--decoder",
+            "transformer",
+            "--encoder",
+            "transformer_multispkr",
+        ]
+    )
+    return tmp_path / "asr_pit" / "config.yaml"
+
+
+@pytest.mark.execution_timeout(20)
+def test_Speech2Text_pit(asr_config_file_pit, lm_config_file):
+    file = open(asr_config_file_pit, "r", encoding="utf-8")
+    asr_train_config = file.read()
+    asr_train_config = yaml.full_load(asr_train_config)
+    asr_train_config["frontend"] = "default"
+    asr_train_config["encoder_conf"] = {"num_inf": 2}
+    asr_train_config["ctc_conf"] = {"reduce": False}
+    asr_train_config["model"] = "pit_espnet"
+    asr_train_config["model_conf"] = {"num_inf": 2, "num_ref": 2}
+    # Change the configuration file
+    with open(asr_config_file_pit, "w", encoding="utf-8") as files:
+        yaml.dump(asr_train_config, files)
+    speech2text = Speech2Text(
+        asr_train_config=asr_config_file_pit,
+        lm_train_config=lm_config_file,
+        beam_size=1,
+        multi_asr=True,
+    )
+    speech = np.random.randn(10000)
+    results = speech2text(speech)
+    for ret in results:
+        for text, token, token_int, hyp in ret:
+            assert isinstance(text, str)
+            assert isinstance(token[0], str)
+            assert isinstance(token_int[0], int)
+            assert isinstance(hyp, Hypothesis)
+
+
+@pytest.mark.execution_timeout(20)
+@pytest.mark.parametrize(
+    "encoder_class", ["transformer", "conformer", "e_branchformer"]
+)
+def test_Speech2Text_interctc(asr_config_file, lm_config_file, encoder_class):
+    # Change the configuration file to enable InterCTC
+    file = open(asr_config_file, "r", encoding="utf-8")
+    asr_train_config = file.read()
+    asr_train_config = yaml.full_load(asr_train_config)
+    asr_train_config["encoder"] = encoder_class
+    asr_train_config["encoder_conf"]["interctc_layer_idx"] = [1, 2]
+    asr_train_config["model_conf"]["interctc_weight"] = 0.5
+    with open(asr_config_file, "w", encoding="utf-8") as files:
+        yaml.dump(asr_train_config, files)
+
+    speech2text = Speech2Text(
+        asr_train_config=asr_config_file, lm_train_config=lm_config_file, beam_size=1
+    )
+    speech = np.random.randn(100000)
+    results, interctc_res = speech2text(speech)
+    for text, token, token_int, hyp in results:
+        assert isinstance(text, str)
+        assert isinstance(token[0], str)
+        assert isinstance(token_int[0], int)
+        assert isinstance(hyp, Hypothesis)
+
+    assert isinstance(interctc_res, dict)
+    for k, tokens in interctc_res.items():
+        assert isinstance(k, int)
+        assert isinstance(tokens, list)
+        assert isinstance(tokens[0], str)

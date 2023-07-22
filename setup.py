@@ -11,33 +11,40 @@ requirements = {
         "setuptools>=38.5.1",
         "packaging",
         "configargparse>=1.2.1",
-        "typeguard>=2.7.0",
+        "typeguard==2.13.3",
         "humanfriendly",
         "scipy>=1.4.1",
         "filelock",
-        "librosa>=0.8.0",
+        "librosa==0.9.2",
         "jamo==0.4.1",  # For kss
         "PyYAML>=5.1.2",
         "soundfile>=0.10.2",
         "h5py>=2.10.0",
-        "kaldiio>=2.17.0",
+        "kaldiio>=2.18.0",
         "torch>=1.3.0",
         "torch_complex",
         "nltk>=3.4.5",
-        "numpy",
+        # fix CI error due to the use of deprecated aliases
+        "numpy<1.24",
         # https://github.com/espnet/espnet/runs/6646737793?check_suite_focus=true#step:8:7651
         "protobuf<=3.20.1",
+        "hydra-core",
+        "opt-einsum",
         # ASR
-        "sentencepiece",
+        "sentencepiece==0.1.97",
         "ctc-segmentation>=1.6.6",
         # TTS
-        "pyworld>=0.2.10",
+        "pyworld>=0.3.4",
         "pypinyin<=0.44.0",
         "espnet_tts_frontend",
         # ENH
         "ci_sdr",
         "pytorch_wpe",
         "fast-bss-eval==0.1.3",
+        # SPK
+        "asteroid_filterbanks==0.4.0",
+        # UASR
+        "editdistance",
         # fix CI error due to the use of deprecated functions
         # https://github.com/espnet/espnet/actions/runs/3174416926/jobs/5171182884#step:8:8419
         # https://importlib-metadata.readthedocs.io/en/latest/history.html#v5-0-0
@@ -46,7 +53,7 @@ requirements = {
     # train: The modules invoked when training only.
     "train": [
         "matplotlib",
-        "pillow>=6.1.0",
+        "pillow==9.5.0",
         "editdistance==0.5.2",
         "wandb",
         "tensorboard>=1.14",
@@ -57,7 +64,7 @@ requirements = {
         "espnet_model_zoo",
         "gdown",
         "resampy",
-        "pysptk>=0.1.17",
+        "pysptk>=0.2.1",
         "morfessor",  # for zeroth-korean
         "youtube_dl",  # for laborotv
         "nnmnkwii",
@@ -67,6 +74,8 @@ requirements = {
         "fastdtw",
         "nara_wpe>=0.0.5",
         "sacrebleu>=1.5.1",
+        "praatio>=6,<7",  # for librispeech phoneme alignment
+        "scikit-learn>=1.0.0",  # for HuBERT kmeans
     ],
     # all: The modules should be optionally installled due to some reason.
     #      Please consider moving them to "install" occasionally
