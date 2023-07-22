@@ -1,4 +1,4 @@
-# Hakka Data location & partition
+# Hakka data location & partition
 ```
 downloads
 └── data_hakka
