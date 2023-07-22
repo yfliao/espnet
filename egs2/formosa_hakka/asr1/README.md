@@ -86,6 +86,21 @@ downloads
             └── M126
 ```
 
+# Transcript
+```
+❯ head downloads/data_hakka/transcript/hakka_transcript.txt
+F0010001A2007_1_07 ngin11 og2 ngin11 pa55 tien24 m11 pa55 ngin11 san55 ngin11 ki24 tien24 bud2 ki24
+F0010001A2007_10_07 den31 ded2 ngied5 cud2 ngid2 log5 xi24
+F0010001A2007_100_07 zun31 sui31 ngien11 ha24 e31 ca11 hed2 sang11 ha55 e31 cu31 fun55 song55 cam55 e31
+F0010001A2007_101_07 vog5 teu11 dab5 vu24 in11 jiu31 ngiong11 ien11 xien55 e31 fad2 gau55 ngiau55 kiun11 e31
+F0010001A2007_102_07 bai11 zog2 nen55 zu24 e31 fo31 teu11 nga11 gog5 e31 lung11 cong11 bi11 bi55 e31
+F0010001A2007_103_07 pong55 giang55 to31 gung24 lo11 lib2 ma11 va31 tai55 pien31 con24 mun11 xiag2 go55 teu11
+F0010001A2007_104_07 cag5 mun11 xim24 gon24 e31 li11 ba24 zon31 ngoi55 ga24 lo11 e31 miang55 ton11 e31
+F0010001A2007_105_07 heu55 sang24 ngin11 zui55 giang24 lo31 ngin11 ga24 nung11 gong31 do31 siin11 jid2
+F0010001A2007_106_07 lo31 tai24 tung11 teu11 miang11 qion11 qion11 bi31 m11 ded2 bi31 ge55 mi24 miang11 qiu55 han11 ka55 ded2
+F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11 zung31 bau24 hi31 loi11
+```
+
 # RESULTS
 ## Environments
 - date: Sat Jul 22 06:37:30 CST 2023
