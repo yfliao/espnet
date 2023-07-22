@@ -20,9 +20,6 @@ EOF
 SECONDS=0
 
 # Data preparation related
-data_url=www.openslr.org/resources/33
-remove_archive=false
-download_opt=
 
 log "$0 $*"
 
@@ -39,9 +36,6 @@ if [ $# -gt 1 ]; then
   exit 2
 fi
 
-if "$remove_archive"; then
-  download_opt="--remove-archive"
-fi
 
 if [ -z "${HAKKA}" ]; then
   log "Error: \$HAKKA is not set in db.sh."
@@ -49,20 +43,22 @@ if [ -z "${HAKKA}" ]; then
 fi
 
 
-log "Download data to ${HAKKA}"
-#if [ ! -d "${HAKKA}" ]; then
-#    mkdir -p "${HAKKA}"
-#fi
 # To absolute path
 HAKKA=$(cd ${HAKKA}; pwd)
-
-#echo local/download_and_untar.sh ${download_opt} "${HAKKA}" "${data_url}" data_hakka
-#local/download_and_untar.sh ${download_opt} "${HAKKA}" "${data_url}" data_hakka
-#echo local/download_and_untar.sh ${download_opt} "${HAKKA}" "${data_url}" resource_hakka
-#local/download_and_untar.sh ${download_opt} "${HAKKA}" "${data_url}" resource_hakka
-
 hakka_audio_dir=${HAKKA}/data_hakka/wav
-hakka_text=${HAKKA}/data_hakka/transcript/hakka_transcript_v0.8.txt
+hakka_text=${HAKKA}/data_hakka/transcript/hakka_transcript.txt
+
+log "check downloads/data_hakka/wav"
+if [ ! -d "${hakka_audio_dir}" ]; then
+    echo "Please put audio data to ${hakka_audio_dir}"
+    exit 2
+fi
+log "check downloads/data_hakka/transcript/hakka_transcript.txt"
+if [ ! -d "${hakka_text}" ]; then
+    echo "Please put hakka_transcript.txt to ${hakka_text}"
+    exit 2
+fi
+
 
 log "Data Preparation"
 train_dir=data/local/train
