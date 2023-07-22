@@ -28,6 +28,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --audio_format "wav" \
     --feats_type raw \
     --token_type bpe \
+    --bpe_train_text "data/${train_set}/text" \
     --nbpe 735 \
     --use_lm ${use_lm}                                 \
     --use_word_lm ${use_wordlm}                        \
