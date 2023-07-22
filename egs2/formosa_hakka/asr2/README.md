@@ -1,3 +1,16 @@
+# data location
+```
+downloads  
+└── data_hakka  
+    ├── transcript  
+    │   └── hakka_transcript.txt  
+    └── wav  
+        ├── dev  
+        ├── test  
+        └── train  
+```
+
+
 # RESULTS
 ## Environments
 - date: Sat Jul 22 15:50:18 CST 2023
