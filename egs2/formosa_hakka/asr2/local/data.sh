@@ -59,8 +59,6 @@ if [ ! -f "${hakka_text}" ]; then
     exit 2
 fi
 
-exit 2
-
 log "Data Preparation"
 train_dir=data/local/train
 dev_dir=data/local/dev
