@@ -54,11 +54,12 @@ if [ ! -d "${hakka_audio_dir}" ]; then
     exit 2
 fi
 log "check downloads/data_hakka/transcript/hakka_transcript.txt"
-if [ ! -d "${hakka_text}" ]; then
+if [ ! -f "${hakka_text}" ]; then
     echo "Please put hakka_transcript.txt to ${hakka_text}"
     exit 2
 fi
 
+exit 2
 
 log "Data Preparation"
 train_dir=data/local/train
@@ -86,7 +87,7 @@ rm -r $tmp_dir
 # Transcriptions preparation
 for dir in $train_dir $dev_dir $test_dir; do
   log Preparing $dir transcriptions
-  sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{print $NF}' > $dir/utt.list
+[A  sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{print $NF}' > $dir/utt.list
   sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{i=NF-1;printf("%s %s\n",$NF,$i)}' > $dir/utt2spk_all
   paste -d' ' $dir/utt.list $dir/wav.flist > $dir/wav.scp_all
   utils/filter_scp.pl -f 1 $dir/utt.list $hakka_text > $dir/transcripts.txt
