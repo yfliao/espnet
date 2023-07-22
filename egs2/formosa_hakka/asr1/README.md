@@ -1,12 +1,12 @@
 # data location
-downloads
-└── data_hakka
-    ├── transcript
-    │   └── hakka_transcript.txt
-    └── wav
-        ├── dev
-        ├── test
-        └── train
+downloads  
+└── data_hakka  
+    ├── transcript  
+    │   └── hakka_transcript.txt  
+    └── wav  
+        ├── dev  
+        ├── test  
+        └── train  
 
 
 # RESULTS
