@@ -85,7 +85,7 @@ rm -r $tmp_dir
 # Transcriptions preparation
 for dir in $train_dir $dev_dir $test_dir; do
   log Preparing $dir transcriptions
-[A  sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{print $NF}' > $dir/utt.list
+  sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{print $NF}' > $dir/utt.list
   sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{i=NF-1;printf("%s %s\n",$NF,$i)}' > $dir/utt2spk_all
   paste -d' ' $dir/utt.list $dir/wav.flist > $dir/wav.scp_all
   utils/filter_scp.pl -f 1 $dir/utt.list $hakka_text > $dir/transcripts.txt
