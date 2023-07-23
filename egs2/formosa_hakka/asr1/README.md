@@ -1,3 +1,28 @@
+# 客語拼音輸出
+
+修改egs2/aishell/asr1腳本，token_type改用bpe，並控制RAM使用量<24GB，以下是主要更動：
+
+## run.sh
+```
+...
+./asr.sh \
+    ...
+    --ngpu 1 \
+    --lang en \
+    --audio_format "wav" \
+    --token_type bpe \
+    --bpe_train_text "data/${train_set}/text" \
+    --nbpe 735 \
+    ...
+```
+
+## conf/train_asr_branchformer.yaml
+```
+# minibatch related
+...
+batch_bins: 5000000
+```
+
 # Hakka data location & partition
 ```
 downloads
