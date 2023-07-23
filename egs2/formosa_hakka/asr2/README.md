@@ -16,7 +16,7 @@
 ```
 # minibatch related
 ...
-batch_bins: 3000000
+batch_bins: 4500000
 ```
 
 # Hakka data location & partition
