@@ -21,7 +21,7 @@ batch_bins: 3000000
 
 # Hakka data location & partition
 
-整個FSR-2023-Hakka-Lavalier-Train語料庫，以人跟性別為單位分割，隨機挑選4男4女為dev set，4男4女為test set，剩下的全部做為訓練用。資料處理完後以下列格式，存放在 downloads目錄下。
+整個FSR-2023-Hakka-Lavalier-Train語料庫，以人跟性別為單位分割，隨機挑選4男4女為dev set，4男4女為test set，剩下的全部做為訓練用train set。資料處理完後以下列格式，存放在 downloads目錄下。
 
 ```
 downloads
