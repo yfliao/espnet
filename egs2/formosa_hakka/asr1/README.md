@@ -1,6 +1,6 @@
 # 客語拼音輸出
 
-修改egs2/aishell/asr1腳本，token_type改用bpe，只使用一張GPU，並控制GPU RAM使用量<24GB。訓練一次約11小時。以下是主要更動：
+修改egs2/aishell/asr1腳本，token_type改用bpe，只使用一張GPU，並控制GPU RAM使用量<24GB。訓練一次約12小時。以下是主要更動：
 
 ## run.sh
 ```
