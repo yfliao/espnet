@@ -1,4 +1,4 @@
-name: MacOS
+name: ci on macos
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  test_macos:
+  check_installable_on_macos:
     runs-on: macOS-latest
     if: github.event.pull_request.draft == false
     strategy:
@@ -27,6 +27,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
+      - name: Get PR labels
+        id: pr-labels
+        uses: joerick/pr-labels-action@v1.0.9
       - name: install espnet
         env:
           ESPNET_PYTHON_VERSION: ${{ matrix.python-version }}
