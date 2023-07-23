@@ -20,6 +20,9 @@ batch_bins: 4300000
 ```
 
 # Hakka data location & partition
+
+整個FSR-2023-Hakka-Lavalier-Train語料庫，以人跟性別為單位分割，隨機挑選4男4女為dev set，4男4女為test set，剩下的全部做為訓練用。資料處理完後以下列格式，存放在 downloads目錄下。
+
 ```
 downloads
 └── data_hakka
@@ -106,6 +109,8 @@ downloads
             ├── M125
             └── M126
 ```
+
+將FSR-2023-Hakka-Lavalier-Train語料庫下之train.csv檔案，處理成如下圖之文字擋。最終只保留音檔編號與客語漢字。
 
 # Transcript
 ```
