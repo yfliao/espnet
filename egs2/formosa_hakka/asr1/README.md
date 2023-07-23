@@ -134,47 +134,49 @@ F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11
 
 # RESULTS
 ## Environments
-- date: Sat Jul 22 06:37:30 CST 2023
-- python version: 3.9.17 (main, Jul  5 2023, 20:41:20)  [GCC 11.2.0]
-- espnet version: espnet 202304
-- pytorch version: pytorch 2.0.1+cu118
-- Git hash: 09584933cf6ad91e59e99738edb27ad89d8d4481
-  - Commit date: Tue Jul 18 07:56:57 2023 +0200
+- date: `Sun Jul 23 22:32:31 CST 2023`
+- python version: `3.9.17 (main, Jul  5 2023, 20:41:20)  [GCC 11.2.0]`
+- espnet version: `espnet 202304`
+- pytorch version: `pytorch 2.0.1+cu118`
+- Git hash: `f04d674112f2748dce614ce7d832cebd1fa63b95`
+  - Commit date: `Sun Jul 23 20:46:20 2023 +0800`
 
 ## exp/asr_train_asr_branchformer_raw_en_bpe735_sp
 ### WER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|decode_asr_branchformer_asr_model_valid.acc.ave/test|2187|37456|93.8|5.9|0.3|0.1|6.3|45.1|
+|decode_asr_branchformer_asr_model_valid.acc.ave/test|2187|37456|95.0|4.8|0.2|0.1|5.1|42.8|
 
 ### CER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|decode_asr_branchformer_asr_model_valid.acc.ave/test|2187|210487|98.1|1.4|0.6|0.3|2.3|45.1|
+|decode_asr_branchformer_asr_model_valid.acc.ave/test|2187|210487|98.5|1.1|0.3|0.2|1.7|42.8|
 
 ### TER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|decode_asr_branchformer_asr_model_valid.acc.ave/test|2187|77036|96.1|3.3|0.5|0.1|4.0|45.1|
+|decode_asr_branchformer_asr_model_valid.acc.ave/test|2187|77036|97.0|2.7|0.3|0.1|3.1|42.8|
 
 ## exp/asr_train_asr_branchformer_raw_en_bpe735_sp/decode_asr_branchformer_asr_model_valid.acc.ave
 ### WER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|org/dev|2126|36245|93.9|6.0|0.1|0.1|6.1|39.3|
+|org/dev|2126|36245|94.9|5.0|0.1|0.0|5.1|37.4|
 
 ### CER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|org/dev|2126|203417|98.3|1.2|0.5|0.3|2.0|39.3|
+|org/dev|2126|203417|98.6|1.0|0.4|0.2|1.6|37.4|
 
 ### TER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|org/dev|2126|74861|95.9|3.3|0.8|0.1|4.2|39.3|
+|org/dev|2126|74861|96.5|2.7|0.7|0.1|3.5|37.4|
+
+2023-07-23T22:32:33 (asr.sh:1838:main) Successfully finished. [elapsed=44589s]
