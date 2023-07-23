@@ -1,3 +1,24 @@
+# 客語漢字輸出
+
+修改egs2/aishell/asr1腳本，token_type沿用char，並控制RAM使用量<24GB，以下是主要更動：
+
+## run.sh
+```
+...
+./asr.sh \
+    ...
+    --ngpu 1 \
+    --audio_format "wav" \
+    ...
+```
+
+## conf/train_asr_branchformer.yaml
+```
+# minibatch related
+...
+batch_bins: 4300000
+```
+
 # Hakka data location & partition
 ```
 downloads
