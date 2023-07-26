@@ -1,6 +1,6 @@
 # 客語拼音輸出
 
-修改egs2/aishell/asr1腳本，token_type改用bpe，只使用一張GPU，並控制GPU RAM使用量<24GB。訓練一次約12小時。以下是主要更動：
+修改egs2/aishell/asr1腳本，token_type改用bpe，加上wavlm_large前級。以下是主要更動：
 
 ## run.sh
 ```
@@ -14,13 +14,27 @@
     --bpe_train_text "data/${train_set}/text" \
     --nbpe 735 \
     ...
+    --feats_normalize utterance_mvn%
 ```
 
-## conf/train_asr_branchformer.yaml
+## conf/train_asr_conformer+wavlm.yaml
 ```
+    I A  conf/train_asr_conformer+wavlm.yaml (yaml)                                                    Row 1    Col 1
+frontend: s3prl
+frontend_conf:
+    frontend_conf:
+        upstream: wavlm_large  # Note: If the upstream is changed, please change the input_size in the preencoder.
+    download_dir: ./hub
+    multilayer_feature: True
+
+preencoder: linear
+preencoder_conf:
+    input_size: 1024  # Note: If the upstream is changed, please change this value accordingly.
+    output_size: 80
+
 # minibatch related
 ...
-batch_bins: 5000000
+batch_bins: 3000000
 ```
 
 # Hakka data location & partition
