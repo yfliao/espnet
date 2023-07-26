@@ -14,7 +14,7 @@
     --bpe_train_text "data/${train_set}/text" \
     --nbpe 735 \
     ...
-    --feats_normalize utterance_mvn%
+    --feats_normalize utterance_mvn
 ```
 
 ## conf/train_asr_conformer+wavlm.yaml
