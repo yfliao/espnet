@@ -17,8 +17,8 @@
 ESPnet支持從大型預訓練模型（例如 wav2vec 2.0 、 HuBERT或wavlm）中抽取self-supervised speech representations  
 這些模型是在大量未標記的聲音上進行預訓練的，這種方法在缺乏資料時特別有用  
 
-範例測試結果(CER)  
-1.客語漢字(Conformer)  
+範例測試結果  
+1.客語漢字CER(Conformer)  
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
 |decode_asr_asr_model_valid.acc.ave/test|2187|37473|94.7|4.8|0.4|0.1|5.3|17.1|
@@ -27,15 +27,21 @@ ESPnet支持從大型預訓練模型（例如 wav2vec 2.0 、 HuBERT或wavlm）�
 2.客語拼音(Conformer)   
 
 
-3.客語漢字(Conformer+wavlm_large)  
+3.客語漢字CER(Conformer+wavlm_large)  
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
 |decode_asr_asr_model_valid.acc.best/test|2187|37473|96.8|2.2|1.0|0.1|3.3|17.4|
 
-4.客語拼音(Conformer+wavlm_large)  
+4.客語拼音CER&WER(Conformer+wavlm_large)  
+CER
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
 |decode_asr_asr_model_valid.acc.ave/test|2187|210486|98.9|0.9|0.2|0.1|1.2|42.1|
-|decode_asr_asr_model_valid.acc.best/test|2187|210486|98.7|1.1|0.3|0.2|1.5|47.1|
+|decode_asr_asr_model_valid.acc.best/test|2187|210486|98.7|1.1|0.3|0.2|1.5|47.1|  
 
+WER  
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|  
+|---|---|---|---|---|---|---|---|---|  
+|decode_asr_asr_model_valid.acc.ave/test|   2187    |   37457   |   96.2     |   3.7   |    0.1    |    0.1   |    3.9   |    42.1    |  
+|decode_asr_asr_model_valid.acc.best/test|2187  |  37457  |  95.3   |  4.5   |   0.2   |   0.0    | 4.7 |   47.1  |  
 
