@@ -1,3 +1,15 @@
+frontend: s3prl
+frontend_conf:
+    frontend_conf:
+        upstream: wavlm_large  # Note: If the upstream is changed, please change the input_size in the preencoder.
+    download_dir: ./hub
+    multilayer_feature: True
+
+preencoder: linear
+preencoder_conf:
+    input_size: 1024  # Note: If the upstream is changed, please change this value accordingly.
+    output_size: 80
+
 # network architecture
 # encoder related
 encoder: conformer
@@ -38,7 +50,7 @@ model_conf:
 
 # minibatch related
 batch_type: numel
-batch_bins: 25000000
+batch_bins: 4000000
 
 # optimization related
 accum_grad: 1

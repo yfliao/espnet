@@ -24,12 +24,10 @@ speed_perturb_factors="0.9 1.0 1.1"
     --nj 64 \
     --inference_nj 64 \
     --ngpu 10 \
-    --lang en \
+    --lang zh \
     --audio_format "wav" \
     --feats_type raw \
-    --token_type bpe \
-    --bpe_train_text "data/${train_set}/text" \
-    --nbpe 735 \
+    --token_type char \
     --use_lm ${use_lm}                                 \
     --use_word_lm ${use_wordlm}                        \
     --lm_config "${lm_config}"                         \
@@ -42,5 +40,4 @@ speed_perturb_factors="0.9 1.0 1.1"
     --asr_speech_fold_length 512 \
     --asr_text_fold_length 150 \
     --lm_fold_length 150 \
-    --lm_train_text "data/${train_set}/text" "$@" \
-    --feats_normalize utterance_mvn
+    --lm_train_text "data/${train_set}/text" "$@"

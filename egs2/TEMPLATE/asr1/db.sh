@@ -5,7 +5,6 @@ ACCENTED_FR=downloads
 AIDATATANG_200ZH=downloads
 AISHELL=downloads
 HAKKA=downloads
-HAKKA=downloads
 AISHELL2=
 AISHELL3=downloads
 AISHELL4=downloads

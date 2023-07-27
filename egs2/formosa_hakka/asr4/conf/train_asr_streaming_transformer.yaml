@@ -1,6 +1,6 @@
 # network architecture
 # encoder related
-encoder: conformer
+encoder: contextual_block_transformer
 encoder_conf:
     output_size: 256    # dimension of attention
     attention_heads: 4
@@ -8,16 +8,14 @@ encoder_conf:
     num_blocks: 12      # the number of encoder blocks
     dropout_rate: 0.1
     positional_dropout_rate: 0.1
-    attention_dropout_rate: 0.1
+    attention_dropout_rate: 0.0
     input_layer: conv2d # encoder architecture type
     normalize_before: true
-    rel_pos_type: latest
-    pos_enc_layer_type: rel_pos
-    selfattention_layer_type: rel_selfattn
-    activation_type: swish
-    macaron_style: true
-    use_cnn_module: true
-    cnn_module_kernel: 31
+    block_size: 40
+    hop_size: 16
+    look_ahead: 16
+    init_average: true
+    ctx_pos_enc: true
 
 # decoder related
 decoder: transformer
@@ -27,8 +25,8 @@ decoder_conf:
     num_blocks: 6
     dropout_rate: 0.1
     positional_dropout_rate: 0.1
-    self_attention_dropout_rate: 0.
-    src_attention_dropout_rate: 0.
+    self_attention_dropout_rate: 0.0
+    src_attention_dropout_rate: 0.0
 
 # hybrid CTC/attention
 model_conf:
@@ -37,13 +35,14 @@ model_conf:
     length_normalized_loss: false
 
 # minibatch related
-batch_type: numel
-batch_bins: 25000000
-
+batch_type: folded
+batch_size: 128
+#valid_batch_size: 1
 # optimization related
 accum_grad: 1
 grad_clip: 5
-max_epoch: 60
+patience: 3
+max_epoch: 20
 val_scheduler_criterion:
     - valid
     - acc
@@ -51,32 +50,27 @@ best_model_criterion:
 -   - valid
     - acc
     - max
+early_stopping_criterion:
+    - valid
+    - cer_ctc
+    - min
 keep_nbest_models: 10
 
+# NoamLR is deprecated. Use WarmupLR.
+# The following is equivalent setting for NoamLR:
+#
+#    optim: adam
+#    optim_conf:
+#        lr: 10.
+#    scheduler: noamlr
+#    scheduler_conf:
+#        model_size: 256
+#        warmup_steps: 25000
+#
 optim: adam
 optim_conf:
-   lr: 0.001
-   weight_decay: 0.000001
-scheduler: warmuplr
+    lr: 0.001
+scheduler: warmuplr     # pytorch v1.1.0+ required
 scheduler_conf:
-   warmup_steps: 35000
-
-num_workers: 4      # num of workers of data loader
-use_amp: true      # automatic mixed precision
-unused_parameters: false    # set as true if some params are unused in DDP
-
-specaug: specaug
-specaug_conf:
-    apply_time_warp: true
-    time_warp_window: 5
-    time_warp_mode: bicubic
-    apply_freq_mask: true
-    freq_mask_width_range:
-    - 0
-    - 27
-    num_freq_mask: 2
-    apply_time_mask: true
-    time_mask_width_ratio_range:
-    - 0.
-    - 0.05
-    num_time_mask: 10
+    warmup_steps: 25000
+num_att_plot: 0

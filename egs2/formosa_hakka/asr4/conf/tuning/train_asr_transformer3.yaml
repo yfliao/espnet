@@ -1,6 +1,6 @@
 # network architecture
 # encoder related
-encoder: conformer
+encoder: transformer
 encoder_conf:
     output_size: 256    # dimension of attention
     attention_heads: 4
@@ -8,16 +8,9 @@ encoder_conf:
     num_blocks: 12      # the number of encoder blocks
     dropout_rate: 0.1
     positional_dropout_rate: 0.1
-    attention_dropout_rate: 0.1
+    attention_dropout_rate: 0.0
     input_layer: conv2d # encoder architecture type
     normalize_before: true
-    rel_pos_type: latest
-    pos_enc_layer_type: rel_pos
-    selfattention_layer_type: rel_selfattn
-    activation_type: swish
-    macaron_style: true
-    use_cnn_module: true
-    cnn_module_kernel: 31
 
 # decoder related
 decoder: transformer
@@ -27,8 +20,8 @@ decoder_conf:
     num_blocks: 6
     dropout_rate: 0.1
     positional_dropout_rate: 0.1
-    self_attention_dropout_rate: 0.
-    src_attention_dropout_rate: 0.
+    self_attention_dropout_rate: 0.0
+    src_attention_dropout_rate: 0.0
 
 # hybrid CTC/attention
 model_conf:
@@ -38,12 +31,12 @@ model_conf:
 
 # minibatch related
 batch_type: numel
-batch_bins: 25000000
+batch_bins: 8500000
 
 # optimization related
-accum_grad: 1
+accum_grad: 2
 grad_clip: 5
-max_epoch: 60
+max_epoch: 50
 val_scheduler_criterion:
     - valid
     - acc
@@ -55,15 +48,10 @@ keep_nbest_models: 10
 
 optim: adam
 optim_conf:
-   lr: 0.001
-   weight_decay: 0.000001
+   lr: 0.0005
 scheduler: warmuplr
 scheduler_conf:
-   warmup_steps: 35000
-
-num_workers: 4      # num of workers of data loader
-use_amp: true      # automatic mixed precision
-unused_parameters: false    # set as true if some params are unused in DDP
+   warmup_steps: 30000
 
 specaug: specaug
 specaug_conf:
@@ -73,10 +61,10 @@ specaug_conf:
     apply_freq_mask: true
     freq_mask_width_range:
     - 0
-    - 27
+    - 30
     num_freq_mask: 2
     apply_time_mask: true
-    time_mask_width_ratio_range:
-    - 0.
-    - 0.05
-    num_time_mask: 10
+    time_mask_width_range:
+    - 0
+    - 40
+    num_time_mask: 2
