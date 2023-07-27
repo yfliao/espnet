@@ -10,6 +10,7 @@
     --ngpu 1 \
     --audio_format "wav" \
     ...
+    --feats_normalize utterance_mvn
 ```
 
 ## conf/train_asr_conformer+wavlm.yaml
