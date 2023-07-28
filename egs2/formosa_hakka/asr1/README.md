@@ -182,5 +182,17 @@ F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11
 2023-07-23T22:32:33 (asr.sh:1838:main) Successfully finished. [elapsed=44589s]  
 
 ## Conformer result  
+訓練時間:3090*1 & 10小時  
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_transformer_asr_model_valid.acc.best/test|2187|37421|91.3|7.8|0.9|0.1|8.8|50.5|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_transformer_asr_model_valid.acc.best/test|2187|210452|96.8|2.0|1.3|0.4|3.7|50.5|
 
  
