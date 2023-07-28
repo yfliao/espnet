@@ -164,10 +164,10 @@ F0010001A2007_107_07 巴掌嫲盪啊過去這事頭你總包起來
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|org/dev|2126|36270|93.2|5.9|0.8|0.3|7.0|20.3|
+|org/dev|2126|36270|93.2|5.9|0.8|0.3|7.0|20.3|  
 
-### TER
-
+## Conformer result  
+config:path_to/config/train_asr_conformer_e12_amp.yaml  
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-2023-07-22T15:50:20 (asr.sh:1838:main) Successfully finished. [elapsed=27088s]
+|decode_asr_asr_model_valid.acc.best/test|2187|37473|96.8|2.2|1.0|0.1|3.3|17.4|
