@@ -138,4 +138,10 @@ F0010001A2007_104_07 柵門心肝仔籬笆轉外家籮仔命團仔
 F0010001A2007_105_07 後生人最驚老人家噥講著成績
 F0010001A2007_106_07 老弟同頭名全全比毋得比該尾名就還較得
 F0010001A2007_107_07 巴掌嫲盪啊過去這事頭你總包起來
-```
+```  
+## Conformer+wavlm_large result  
+config:path_to/config/train_asr_conformer7_wavlm_large.yaml  
+CER  
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|  
+|---|---|---|---|---|---|---|---|---|  
+|decode_asr_asr_model_valid.acc.best/test|2187|37473|96.8|2.2|1.0|0.1|3.3|17.4|  
