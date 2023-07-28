@@ -139,7 +139,7 @@ F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11
 - espnet version: `espnet 202304`
 - pytorch version: `pytorch 2.0.1+cu118`
 - Git hash: `f04d674112f2748dce614ce7d832cebd1fa63b95`
-  - Commit date: `Sun Jul 23 20:46:20 2023 +0800`
+  - Commit date: `Sun Jul 23 20:46:20 2023 +0800`  
 
 ## exp/asr_train_asr_branchformer_raw_en_bpe735_sp
 ### WER
@@ -179,4 +179,8 @@ F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11
 |---|---|---|---|---|---|---|---|---|
 |org/dev|2126|74861|96.5|2.7|0.7|0.1|3.5|37.4|
 
-2023-07-23T22:32:33 (asr.sh:1838:main) Successfully finished. [elapsed=44589s]
+2023-07-23T22:32:33 (asr.sh:1838:main) Successfully finished. [elapsed=44589s]  
+
+## Conformer result  
+
+ 
