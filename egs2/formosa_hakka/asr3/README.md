@@ -144,3 +144,17 @@ F0010001A2007_105_07 heu55 sang24 ngin11 zui55 giang24 lo31 ngin11 ga24 nung11 g
 F0010001A2007_106_07 lo31 tai24 tung11 teu11 miang11 qion11 qion11 bi31 m11 ded2 bi31 ge55 mi24 miang11 qiu55 han11 ka55 ded2
 F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11 zung31 bau24 hi31 loi11
 ```
+
+## Conformer+wavlm_large result  
+config:path_to/config/train_asr_conformer7_wavlm_large.yaml  
+CER
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_asr_model_valid.acc.ave/test|2187|210486|98.9|0.9|0.2|0.1|1.2|42.1|
+|decode_asr_asr_model_valid.acc.best/test|2187|210486|98.7|1.1|0.3|0.2|1.5|47.1|  
+
+WER  
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|  
+|---|---|---|---|---|---|---|---|---|  
+|decode_asr_asr_model_valid.acc.best/test|   2187    |   37457   |   96.2     |   3.7   |    0.1    |    0.1   |    3.9   |    42.1    |  
+|decode_asr_asr_model_valid.acc.ave/test|2187  |  37457  |  95.3   |  4.5   |   0.2   |   0.0    | 4.7 |   47.1  |  
