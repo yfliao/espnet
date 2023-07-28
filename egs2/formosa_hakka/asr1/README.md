@@ -183,6 +183,7 @@ F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11
 
 ## Conformer result  
 訓練時間:3090*1 & 10小時  
+config:path_to/config/train_asr_conformer_e12_amp.yaml  
 ### WER
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
