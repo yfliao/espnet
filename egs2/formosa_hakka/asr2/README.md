@@ -167,6 +167,7 @@ F0010001A2007_107_07 巴掌嫲盪啊過去這事頭你總包起來
 |org/dev|2126|36270|93.2|5.9|0.8|0.3|7.0|20.3|  
 
 ## Conformer result  
+訓練時間:10小時  
 config:path_to/config/train_asr_conformer_e12_amp.yaml  
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
