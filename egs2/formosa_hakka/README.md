@@ -27,7 +27,10 @@ asr4 - asr_train_asr_conformer_raw_zh_bpe5000_sp + WavLM_large
 
 *  使用 self-supervised pre-trained models as the front-end  
 ESPnet支持從大型預訓練模型（例如 wav2vec 2.0 、 HuBERT或wavlm）中抽取self-supervised speech representations  
-這些模型是在大量未標記的聲音上進行預訓練的，這種方法在缺乏資料時特別有用  
+這些模型是在大量未標記的聲音上進行預訓練的，這種方法在缺乏資料時特別有用
+
+    ![image-2]([https://github.com/MachineLearningNTUT/taiwanese-tts-supech/assets/111730019/6ed63023-5e81-451e-88dc-22e25d10139b](https://raw.githubusercontent.com/s3prl/s3prl/main/file/S3PRL-logo.png))  
+
 
 ## 測試結果  
 
