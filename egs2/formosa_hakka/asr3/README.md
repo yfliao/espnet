@@ -145,6 +145,55 @@ F0010001A2007_106_07 lo31 tai24 tung11 teu11 miang11 qion11 qion11 bi31 m11 ded2
 F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11 zung31 bau24 hi31 loi11
 ```
 
+# RESULTS
+## Environments
+- date: `Sat Jul 29 08:36:57 CST 2023`
+- python version: `3.10.12 (main, Jul  5 2023, 18:54:27) [GCC 11.2.0]`
+- espnet version: `espnet 202304`
+- pytorch version: `pytorch 2.0.1+cu118`
+- Git hash: `98366eedb8744a46d67cdad540260b07a10ab741`
+  - Commit date: `Fri Jul 28 00:42:49 2023 +0800`
+
+## exp/asr_train_asr_conformer+wavlm_raw_en_bpe735_sp
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave/test|2187|37456|94.5|5.3|0.2|0.1|5.5|44.1|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave/test|2187|210487|98.3|1.3|0.4|0.3|2.0|44.1|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave/test|2187|77036|96.6|3.0|0.4|0.1|3.5|44.1|
+
+## exp/asr_train_asr_conformer+wavlm_raw_en_bpe735_sp/decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|36245|94.5|5.4|0.1|0.0|5.5|39.3|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|203417|98.3|1.2|0.5|0.2|1.9|39.3|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|74861|96.2|3.0|0.8|0.1|3.8|39.3|
+
+2023-07-29T08:37:01 (asr.sh:1838:main) Successfully finished. [elapsed=5368s]
+
 ## Conformer+wavlm_large result  
 訓練時間:3090*1 & 50小時  
 config:path_to/config/train_asr_conformer7_wavlm_large.yaml  
