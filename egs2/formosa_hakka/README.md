@@ -34,7 +34,7 @@ ESPnet支持從大型預訓練模型（例如 wav2vec 2.0 、 HuBERT或wavlm）�
 
 # 測試結果  
 
-## 1.客語拼音(Conformer)   
+* 客語拼音(Conformer)   
 
 WER  
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|  
@@ -46,13 +46,13 @@ CER
 |---|---|---|---|---|---|---|---|---|  
 |decode_asr_transformer_asr_model_valid.acc.best/test|2187|210452|96.8|2.0|1.3|0.4|3.7|50.5|  
 
-## 2.客語漢字CER(Conformer)  
+* 客語漢字CER(Conformer)  
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
 |decode_asr_asr_model_valid.acc.ave/test|2187|37473|94.7|4.8|0.4|0.1|5.3|17.1|
 
-## 3.客語拼音CER&WER(Conformer+wavlm_large)  
+* 客語拼音CER&WER(Conformer+wavlm_large)  
 
 CER
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
@@ -66,7 +66,7 @@ WER
 |decode_asr_asr_model_valid.acc.ave/test|   2187    |   37457   |   96.2     |   3.7   |    0.1    |    0.1   |    3.9   |    42.1    |  
 |decode_asr_asr_model_valid.acc.best/test|2187  |  37457  |  95.3   |  4.5   |   0.2   |   0.0    | 4.7 |   47.1  |  
 
-## 4.客語漢字CER(Conformer+wavlm_large)  
+* 客語漢字CER(Conformer+wavlm_large)  
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
