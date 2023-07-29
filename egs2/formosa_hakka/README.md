@@ -10,7 +10,7 @@ asr2 - asr_train_asr_branchformer_raw_zh_char_sp
 asr2 - asr_train_asr_conformer_raw_zh_char_sp  
 asr4 - asr_train_asr_conformer_raw_zh_bpe5000_sp + WavLM_large  
 
-## 模型架構介紹  
+# 模型架構介紹  
 * Comformer架構  
     1.分別使用CNN和self-attention機制獲得局部和全部上下文訊息  
     2.Separable convolution: 將卷積拆分成兩個部分，pointwise Conv & depthwise Conv ，可以大幅減少計算量  
@@ -32,9 +32,10 @@ ESPnet支持從大型預訓練模型（例如 wav2vec 2.0 、 HuBERT或wavlm）�
     ![image-2](https://raw.githubusercontent.com/s3prl/s3prl/main/file/S3PRL-logo.png)  
 
 
-## 測試結果  
+# 測試結果  
 
-### 1.客語拼音(Conformer)   
+## 1.客語拼音(Conformer)   
+
 WER  
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|  
 |---|---|---|---|---|---|---|---|---|  
@@ -45,13 +46,13 @@ CER
 |---|---|---|---|---|---|---|---|---|  
 |decode_asr_transformer_asr_model_valid.acc.best/test|2187|210452|96.8|2.0|1.3|0.4|3.7|50.5|  
 
-### 2.客語漢字CER(Conformer)  
+## 2.客語漢字CER(Conformer)  
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
 |decode_asr_asr_model_valid.acc.ave/test|2187|37473|94.7|4.8|0.4|0.1|5.3|17.1|
 
-### 3.客語拼音CER&WER(Conformer+wavlm_large)  
+## 3.客語拼音CER&WER(Conformer+wavlm_large)  
 
 CER
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
@@ -65,7 +66,8 @@ WER
 |decode_asr_asr_model_valid.acc.ave/test|   2187    |   37457   |   96.2     |   3.7   |    0.1    |    0.1   |    3.9   |    42.1    |  
 |decode_asr_asr_model_valid.acc.best/test|2187  |  37457  |  95.3   |  4.5   |   0.2   |   0.0    | 4.7 |   47.1  |  
 
-### 4.客語漢字CER(Conformer+wavlm_large)  
+## 4.客語漢字CER(Conformer+wavlm_large)  
+
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
 |decode_asr_asr_model_valid.acc.best/test|2187|37473|96.8|2.2|1.0|0.1|3.3|17.4|
