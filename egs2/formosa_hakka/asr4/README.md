@@ -138,8 +138,56 @@ F0010001A2007_104_07 柵門心肝仔籬笆轉外家籮仔命團仔
 F0010001A2007_105_07 後生人最驚老人家噥講著成績
 F0010001A2007_106_07 老弟同頭名全全比毋得比該尾名就還較得
 F0010001A2007_107_07 巴掌嫲盪啊過去這事頭你總包起來
-```  
+```
+
+# RESULTS
+## Environments
+- date: `Sun Jul 30 04:54:52 CST 2023`
+- python version: `3.10.12 (main, Jul  5 2023, 18:54:27) [GCC 11.2.0]`
+- espnet version: `espnet 202304`
+- pytorch version: `pytorch 2.0.1+cu118`
+- Git hash: `d02e2759a310d88c83c78d1c070dc689dbf0d7d1`
+  - Commit date: `Sat Jul 29 09:54:26 2023 +0800`
+
+## exp/asr_train_asr_conformer+wavlm_raw_zh_char_sp
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_zh_char_valid.loss.ave_asr_model_valid.acc.ave/test|2187|2187|50.0|50.0|0.0|0.0|50.0|50.0|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_zh_char_valid.loss.ave_asr_model_valid.acc.ave/test|2187|37473|93.3|3.0|3.7|0.0|6.7|50.0|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+## exp/asr_train_asr_conformer+wavlm_raw_zh_char_sp/decode_asr_lm_lm_train_lm_transformer2_zh_char_valid.loss.ave_asr_model_valid.acc.ave
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|2128|53.7|46.2|0.1|0.0|46.3|46.2|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|36270|93.6|3.0|3.4|0.0|6.4|46.2|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+2023-07-30T04:54:55 (asr.sh:1838:main) Successfully finished. [elapsed=68493s]
+
+# RESULTS
 ## Conformer+wavlm_large result  
+
 訓練時間:3090*1 & 50小時  
 config:path_to/config/train_asr_conformer7_wavlm_large.yaml  
 CER  
