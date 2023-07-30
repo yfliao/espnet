@@ -196,6 +196,55 @@ F0010001A2007_107_07 ba24 zong31 ma11 tong55 a55 go55 hi55 ia31 se55 teu11 ngi11
 2023-07-29T08:37:01 (asr.sh:1838:main) Successfully finished. [elapsed=5368s]
 
 # RESULTS
+## Environments
+- date: `Sun Jul 30 02:25:15 CST 2023`
+- python version: `3.9.17 (main, Jul  5 2023, 20:41:20)  [GCC 11.2.0]`
+- espnet version: `espnet 202304`
+- pytorch version: `pytorch 2.0.1+cu118`
+- Git hash: `034e939935fa7c7bc93d2a455275a84340cff18a`
+  - Commit date: `Wed Jul 26 08:03:55 2023 +0800`
+
+## exp/asr_train_asr_conformer+wavlm_raw_en_bpe735_sp
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave/test|2187|37456|95.4|4.4|0.2|0.1|4.7|43.4|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave/test|2187|210487|98.6|1.0|0.4|0.2|1.6|43.4|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave/test|2187|77036|97.2|2.4|0.4|0.1|2.9|43.4|
+
+## exp/asr_train_asr_conformer+wavlm_raw_en_bpe735_sp/decode_asr_lm_lm_train_lm_transformer2_en_bpe735_valid.loss.ave_asr_model_valid.acc.ave
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|36245|95.5|4.4|0.1|0.0|4.6|37.9|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|203417|98.7|0.9|0.4|0.2|1.4|37.9|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|org/dev|2126|74861|96.9|2.4|0.7|0.1|3.2|37.9|
+
+2023-07-30T02:25:17 (asr.sh:1838:main) Successfully finished. [elapsed=354315s]
+
+# RESULTS
 
 ## Conformer+wavlm_large result  
 訓練時間:3090*1 & 50小時  
