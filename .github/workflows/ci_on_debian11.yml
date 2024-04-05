@@ -15,7 +15,7 @@ jobs:
     container:
       image: debian:11
       env:
-        ESPNET_PYTHON_VERSION: 3.7
+        ESPNET_PYTHON_VERSION: "3.10"
         TH_VERSION: 1.13.1
         CHAINER_VERSION: 6.0.0
         USE_CONDA: true
@@ -46,3 +46,4 @@ jobs:
         run: |
           ./ci/test_python_espnet1.sh
           ./ci/test_python_espnet2.sh
+          ./ci/test_python_espnetez.sh

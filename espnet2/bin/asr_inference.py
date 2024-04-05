@@ -99,6 +99,7 @@ class Speech2Text:
         ngram_weight: float = 0.9,
         penalty: float = 0.0,
         nbest: int = 1,
+        normalize_length: bool = False,
         streaming: bool = False,
         enh_s2t_task: bool = False,
         quantize_asr_model: bool = False,
@@ -109,6 +110,10 @@ class Speech2Text:
         hugging_face_decoder_conf: Dict[str, Any] = {},
         time_sync: bool = False,
         multi_asr: bool = False,
+        lid_prompt: bool = False,
+        lang_prompt_token: Optional[str] = None,
+        nlp_prompt_token: Optional[str] = None,
+        prompt_token_file: Optional[str] = None,
     ):
         assert check_argument_types()
 
@@ -270,17 +275,17 @@ class Speech2Text:
             hugging_face_model.to(device=device).eval()
 
             if "num_beams" not in hugging_face_decoder_conf:
-                hugging_face_decoder_conf[
-                    "num_beams"
-                ] = hugging_face_model.config.num_beams
+                hugging_face_decoder_conf["num_beams"] = (
+                    hugging_face_model.config.num_beams
+                )
 
             if (
                 hugging_face_model.config.pad_token_id is None
                 and "pad_token_id" not in hugging_face_decoder_conf
             ):
-                hugging_face_decoder_conf[
-                    "pad_token_id"
-                ] = hugging_face_model.config.eos_token_id
+                hugging_face_decoder_conf["pad_token_id"] = (
+                    hugging_face_model.config.eos_token_id
+                )
 
             beam_search = None
             beam_search_transducer = None
@@ -326,6 +331,7 @@ class Speech2Text:
                     vocab_size=len(token_list),
                     token_list=token_list,
                     pre_beam_score_key=None if ctc_weight == 1.0 else "full",
+                    normalize_length=normalize_length,
                 )
 
                 # TODO(karita): make all scorers batchfied
@@ -364,17 +370,29 @@ class Speech2Text:
         if bpemodel is None:
             bpemodel = asr_train_args.bpemodel
 
+        # compatibility for whisper tokenizer
+        preprocessor_conf = getattr(asr_train_args, "preprocessor_conf", {})
+        whisper_language = preprocessor_conf.get("whisper_language", None)
+        whisper_task = preprocessor_conf.get("whisper_task", None)
+
         if token_type is None:
             tokenizer = None
-        elif (
-            token_type == "bpe"
-            or token_type == "hugging_face"
-            or "whisper" in token_type
-        ):
+        elif token_type == "bpe" or token_type == "hugging_face":
             if bpemodel is not None:
-                tokenizer = build_tokenizer(token_type=token_type, bpemodel=bpemodel)
+                tokenizer = build_tokenizer(
+                    token_type=token_type,
+                    bpemodel=bpemodel,
+                )
             else:
                 tokenizer = None
+        elif "whisper" in token_type:
+            tokenizer = build_tokenizer(
+                token_type=token_type,
+                bpemodel=bpemodel,
+                whisper_language=whisper_language,
+                whisper_task=whisper_task,
+                non_linguistic_symbols=prompt_token_file,
+            )
         else:
             tokenizer = build_tokenizer(token_type=token_type)
 
@@ -383,10 +401,45 @@ class Speech2Text:
         elif bpemodel not in ["whisper_en", "whisper_multilingual"]:
             converter = TokenIDConverter(token_list=token_list)
         else:
-            converter = OpenAIWhisperTokenIDConverter(model_type=bpemodel)
+            if "speaker_change_symbol" in preprocessor_conf:
+                sot_asr = True
+            else:
+                sot_asr = False
+            converter = OpenAIWhisperTokenIDConverter(
+                model_type=bpemodel,
+                added_tokens_txt=prompt_token_file,
+                language=whisper_language or "en",
+                task=whisper_task or "transcribe",
+                sot=sot_asr,
+            )
             beam_search.set_hyp_primer(
                 list(converter.tokenizer.sot_sequence_including_notimestamps)
             )
+            if lang_prompt_token is not None:
+                a1 = converter.tokenizer.tokenizer.convert_ids_to_tokens(
+                    converter.tokenizer.sot_sequence_including_notimestamps
+                )
+                a1 = a1[:1] + lang_prompt_token.split() + a1[3:]
+                beam_search.set_hyp_primer(
+                    list(converter.tokenizer.tokenizer.convert_tokens_to_ids(a1))
+                )
+            elif nlp_prompt_token is not None:
+                a1 = converter.tokenizer.tokenizer.convert_ids_to_tokens(
+                    converter.tokenizer.sot_sequence_including_notimestamps
+                )
+                prompt_tokens = tokenizer.text2tokens(nlp_prompt_token)
+                a1 = a1[:2] + prompt_tokens + a1[3:]
+                beam_search.set_hyp_primer(
+                    list(converter.tokenizer.tokenizer.convert_tokens_to_ids(a1))
+                )
+            elif lid_prompt:
+                a1 = converter.tokenizer.tokenizer.convert_ids_to_tokens(
+                    converter.tokenizer.sot_sequence_including_notimestamps
+                )
+                a1 = a1[:1]
+                beam_search.set_hyp_primer(
+                    list(converter.tokenizer.tokenizer.convert_tokens_to_ids(a1))
+                )
         logging.info(f"Text tokenizer: {tokenizer}")
 
         self.asr_model = asr_model
@@ -407,9 +460,7 @@ class Speech2Text:
         self.multi_asr = multi_asr
 
     @torch.no_grad()
-    def __call__(
-        self, speech: Union[torch.Tensor, np.ndarray]
-    ) -> Union[
+    def __call__(self, speech: Union[torch.Tensor, np.ndarray]) -> Union[
         ListOfHypothesis,
         Tuple[
             ListOfHypothesis,
@@ -642,6 +693,7 @@ def inference(
     ngram_weight: float,
     penalty: float,
     nbest: int,
+    normalize_length: bool,
     num_workers: int,
     log_level: Union[int, str],
     data_path_and_name_and_type: Sequence[Tuple[str, str, str]],
@@ -668,6 +720,9 @@ def inference(
     hugging_face_decoder_conf: Dict[str, Any],
     time_sync: bool,
     multi_asr: bool,
+    lang_prompt_token: Optional[str],
+    nlp_prompt_token: Optional[str],
+    prompt_token_file: Optional[str],
 ):
     assert check_argument_types()
     if batch_size > 1:
@@ -710,6 +765,7 @@ def inference(
         ngram_weight=ngram_weight,
         penalty=penalty,
         nbest=nbest,
+        normalize_length=normalize_length,
         streaming=streaming,
         enh_s2t_task=enh_s2t_task,
         multi_asr=multi_asr,
@@ -720,6 +776,9 @@ def inference(
         hugging_face_decoder=hugging_face_decoder,
         hugging_face_decoder_conf=hugging_face_decoder_conf,
         time_sync=time_sync,
+        prompt_token_file=prompt_token_file,
+        lang_prompt_token=lang_prompt_token,
+        nlp_prompt_token=nlp_prompt_token,
     )
     speech2text = Speech2Text.from_pretrained(
         model_tag=model_tag,
@@ -806,9 +865,9 @@ def inference(
                 ibest_writer = writer[f"1best_recog"]
                 if encoder_interctc_res is not None:
                     for idx, text in encoder_interctc_res.items():
-                        ibest_writer[f"encoder_interctc_layer{idx}.txt"][
-                            key
-                        ] = " ".join(text)
+                        ibest_writer[f"encoder_interctc_layer{idx}.txt"][key] = (
+                            " ".join(text)
+                        )
 
 
 def get_parser():
@@ -913,7 +972,6 @@ def get_parser():
         help="Whether we are using a monolithic multi-speaker ASR model "
         "(This flag should be False if a speech separation model is used before ASR)",
     )
-
     group = parser.add_argument_group("Quantization related")
     group.add_argument(
         "--quantize_asr_model",
@@ -1017,7 +1075,30 @@ def get_parser():
         default=False,
         help="Time synchronous beam search.",
     )
-
+    group.add_argument(
+        "--lang_prompt_token",
+        type=str,
+        default=None,
+        help="Prompt token for mulitlingual prompting",
+    )
+    group.add_argument(
+        "--nlp_prompt_token",
+        type=str,
+        default=None,
+        help="Prompt token for natural language phrases as prompting",
+    )
+    group.add_argument(
+        "--prompt_token_file",
+        type=str,
+        default=None,
+        help="Prompt token file",
+    )
+    group.add_argument(
+        "--normalize_length",
+        type=str2bool,
+        default=False,
+        help="If true, best hypothesis is selected by length-normalized scores",
+    )
     return parser
 
 

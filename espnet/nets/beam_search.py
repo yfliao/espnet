@@ -9,6 +9,8 @@ import torch
 from espnet.nets.e2e_asr_common import end_detect
 from espnet.nets.scorer_interface import PartialScorerInterface, ScorerInterface
 
+logger = logging.getLogger(__name__)
+
 
 class Hypothesis(NamedTuple):
     """Hypothesis data type."""
@@ -45,6 +47,7 @@ class BeamSearch(torch.nn.Module):
         pre_beam_score_key: str = None,
         return_hs: bool = False,
         hyp_primer: List[int] = None,
+        normalize_length: bool = False,
     ):
         """Initialize beam search.
 
@@ -62,6 +65,9 @@ class BeamSearch(torch.nn.Module):
             pre_beam_score_key (str): key of scores to perform pre-beam search
             pre_beam_ratio (float): beam size in the pre-beam search
                 will be `int(pre_beam_ratio * beam_size)`
+            return_hs (bool): Whether to return hidden intermediates
+            normalize_length (bool): If true, select the best ended hypotheses
+                based on length-normalized scores rather than the accumulated scores
 
         """
         super().__init__()
@@ -112,6 +118,7 @@ class BeamSearch(torch.nn.Module):
             and len(self.part_scorers) > 0
         )
         self.return_hs = return_hs
+        self.normalize_length = normalize_length
 
     def set_hyp_primer(self, hyp_primer: List[int] = None) -> None:
         """Set the primer sequence for decoding.
@@ -392,6 +399,8 @@ class BeamSearch(torch.nn.Module):
                 If maxlenratio<0.0, its absolute value is interpreted
                 as a constant max output length.
             minlenratio (float): Input length ratio to obtain min output length.
+                If minlenratio<0.0, its absolute value is interpreted
+                as a constant min output length.
             pre_x (torch.Tensor): Encoded speech feature for sequential attn (T, D)
                 Sequential attn computes attn first on pre_x then on x,
                 thereby attending to two sources in sequence.
@@ -411,34 +420,47 @@ class BeamSearch(torch.nn.Module):
             maxlen = -1 * int(maxlenratio)
         else:
             maxlen = max(1, int(maxlenratio * inp.size(0)))
-        minlen = int(minlenratio * inp.size(0))
-        logging.info("decoder input length: " + str(inp.shape[0]))
-        logging.info("max output length: " + str(maxlen))
-        logging.info("min output length: " + str(minlen))
+
+        if minlenratio < 0:
+            minlen = -1 * int(minlenratio)
+        else:
+            minlen = int(minlenratio * inp.size(0))
+        logger.info("decoder input length: " + str(inp.shape[0]))
+        logger.info("max output length: " + str(maxlen))
+        logger.info("min output length: " + str(minlen))
 
         # main loop of prefix search
         running_hyps = self.init_hyp(x if pre_x is None else pre_x)
         ended_hyps = []
         for i in range(maxlen):
-            logging.debug("position " + str(i))
+            logger.debug("position " + str(i))
             best = self.search(running_hyps, x, pre_x=pre_x)
             # post process of one iteration
-            running_hyps = self.post_process(i, maxlen, maxlenratio, best, ended_hyps)
+            running_hyps = self.post_process(
+                i, maxlen, minlen, maxlenratio, best, ended_hyps
+            )
             # end detection
             if maxlenratio == 0.0 and end_detect([h.asdict() for h in ended_hyps], i):
-                logging.info(f"end detected at {i}")
+                logger.info(f"end detected at {i}")
                 break
             if len(running_hyps) == 0:
-                logging.info("no hypothesis. Finish decoding.")
+                logger.info("no hypothesis. Finish decoding.")
                 break
             else:
-                logging.debug(f"remained hypotheses: {len(running_hyps)}")
+                logger.debug(f"remained hypotheses: {len(running_hyps)}")
 
-        nbest_hyps = sorted(ended_hyps, key=lambda x: x.score, reverse=True)
+        if self.normalize_length:
+            # Note (Jinchuan): -1 since hyp starts with <sos> and
+            # initially has score of 0.0
+            nbest_hyps = sorted(
+                ended_hyps, key=lambda x: x.score / (len(x.yseq) - 1), reverse=True
+            )
+        else:
+            nbest_hyps = sorted(ended_hyps, key=lambda x: x.score, reverse=True)
 
         # check the number of hypotheses reaching to eos
         if len(nbest_hyps) == 0:
-            logging.warning(
+            logger.warning(
                 "there is no N-best results, perform recognition "
                 "again with smaller minlenratio."
             )
@@ -451,25 +473,25 @@ class BeamSearch(torch.nn.Module):
         # report the best result
         best = nbest_hyps[0]
         for k, v in best.scores.items():
-            logging.info(
+            logger.info(
                 f"{v:6.2f} * {self.weights[k]:3} = {v * self.weights[k]:6.2f} for {k}"
             )
-        logging.info(f"total log probability: {best.score:.2f}")
-        logging.info(f"normalized log probability: {best.score / len(best.yseq):.2f}")
-        logging.info(f"total number of ended hypotheses: {len(nbest_hyps)}")
+        logger.info(f"total log probability: {best.score:.2f}")
+        logger.info(f"normalized log probability: {best.score / len(best.yseq):.2f}")
+        logger.info(f"total number of ended hypotheses: {len(nbest_hyps)}")
         if self.token_list is not None:
-            logging.info(
+            logger.info(
                 "best hypo: "
                 + "".join([self.token_list[x] for x in best.yseq[1:-1]])
                 + "\n"
             )
         if best.yseq[1:-1].shape[0] == maxlen:
-            logging.warning(
+            logger.warning(
                 "best hypo length: {} == max output length: {}".format(
                     best.yseq[1:-1].shape[0], maxlen
                 )
             )
-            logging.warning(
+            logger.warning(
                 "decoding may be stopped by the max output length limitation, "
                 + "please consider to increase the maxlenratio."
             )
@@ -479,6 +501,7 @@ class BeamSearch(torch.nn.Module):
         self,
         i: int,
         maxlen: int,
+        minlen: int,
         maxlenratio: float,
         running_hyps: List[Hypothesis],
         ended_hyps: List[Hypothesis],
@@ -496,15 +519,15 @@ class BeamSearch(torch.nn.Module):
             List[Hypothesis]: The new running hypotheses.
 
         """
-        logging.debug(f"the number of running hypotheses: {len(running_hyps)}")
+        logger.debug(f"the number of running hypotheses: {len(running_hyps)}")
         if self.token_list is not None:
-            logging.debug(
+            logger.debug(
                 "best hypo: "
                 + "".join([self.token_list[x] for x in running_hyps[0].yseq[1:]])
             )
         # add eos in the final loop to avoid that there are no ended hyps
         if i == maxlen - 1:
-            logging.info("adding <eos> in the last position in the loop")
+            logger.info("adding <eos> in the last position in the loop")
             running_hyps = [
                 h._replace(yseq=self.append_token(h.yseq, self.eos))
                 for h in running_hyps
@@ -520,7 +543,8 @@ class BeamSearch(torch.nn.Module):
                     s = d.final_score(hyp.states[k])
                     hyp.scores[k] += s
                     hyp = hyp._replace(score=hyp.score + self.weights[k] * s)
-                ended_hyps.append(hyp)
+                if i >= minlen:
+                    ended_hyps.append(hyp)
             else:
                 remained_hyps.append(hyp)
         return remained_hyps

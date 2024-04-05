@@ -1,5 +1,5 @@
-# PyTorch version: 1.4.0, 1.5.1, 1.6.0, 1.7.1, 1.8.1, 1.9.1, 1.10.0, 1.10.1, 1.11.0 and 1.12.1 are tested.
-TH_VERSION := 1.13.1
+# PyTorch version: 1.12.1, 1.13.1, 2.0.1, 2.1.0 are tested.
+TH_VERSION := 2.1.0
 
 # Use pip for pytorch installation even if you have anaconda
 ifneq ($(shell test -f ./activate_python.sh && grep 'conda activate' ./activate_python.sh),)
@@ -29,7 +29,7 @@ WITH_OMP=ON
 all: showenv python conda_packages.done ffmpeg.done sctk sph2pipe check_install
 
 python: activate_python.sh packaging.done espnet.done pytorch.done chainer.done fairscale.done torch_optimizer.done
-extra: warp-transducer.done chainer_ctc.done nkf.done moses.done mwerSegmenter.done pesq kenlm.done pyopenjtalk.done py3mmseg.done beamformit.done fairseq.done s3prl.done k2.done transformers.done phonemizer.done longformer.done muskits.done whisper.done rvad_fast.done sounfile_test parallel-wavegan.done
+extra: warp-transducer.done chainer_ctc.done nkf.done moses.done mwerSegmenter.done pesq kenlm.done pyopenjtalk.done py3mmseg.done beamformit.done fairseq.done s3prl.done k2.done transformers.done phonemizer.done longformer.done muskits.done whisper.done rvad_fast.done sounfile_test parallel-wavegan.done lora.done
 
 activate_python.sh:
 	test -f activate_python.sh || { echo "Error: Run ./setup_python.sh or ./setup_anaconda.sh"; exit 1; }
@@ -93,7 +93,14 @@ packaging.done: activate_python.sh
 	. ./activate_python.sh && python3 -m pip install packaging
 	touch packaging.done
 
-numba.done: activate_python.sh
+numpy.done: activate_python.sh
+ifeq ($(strip $(USE_CONDA)),)
+	. ./activate_python.sh && python3 -m pip install "numpy<1.24"
+else
+	. ./activate_python.sh && conda install -y "numpy<1.24"
+endif
+
+numba.done: numpy.done
 	. ./activate_python.sh && python3 -m pip install -U numba
 	touch numba.done
 
@@ -208,6 +215,10 @@ whisper.done: espnet.done
 	. ./activate_python.sh && ./installers/install_whisper.sh
 	touch whisper.done
 
+lora.done: espnet.done
+	. ./activate_python.sh && ./installers/install_lora.sh
+	touch lora.done
+
 k2.done: espnet.done
 	. ./activate_python.sh && ./installers/install_k2.sh
 	touch k2.done
@@ -219,7 +230,6 @@ gtn.done: espnet.done
 transformers.done: espnet.done
 	. ./activate_python.sh && ./installers/install_transformers.sh
 	touch transformers.done
-
 
 parallel-wavegan.done: espnet.done
 	. ./activate_python.sh && ./installers/install_parallel-wavegan.sh
@@ -240,6 +250,10 @@ cauchy_mult.done: espnet.done
 rvad_fast.done: espnet.done
 	git clone https://github.com/zhenghuatan/rVADfast.git
 	touch rvad_fast.done
+
+discrete_speech_metrics.done: espnet.done
+	. ./activate_python.sh && ./installers/install_discrete_speech_metrics.sh
+	touch discrete_speech_metrics.done
 
 check_install: python
 	. ./activate_python.sh; . ./extra_path.sh; python3 check_install.py
