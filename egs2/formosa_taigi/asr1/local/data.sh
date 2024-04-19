@@ -20,7 +20,7 @@ EOF
 SECONDS=0
 
 # Data preparation related
-data_url=tongan-puntiunn.ithuan.tw/SuiSiann
+data_url=www.openslr.org/resources/33
 remove_archive=false
 download_opt=
 
@@ -43,26 +43,26 @@ if "$remove_archive"; then
   download_opt="--remove-archive"
 fi
 
-if [ -z "${FORMOSA_TAIGI}" ]; then
-  log "Error: \$FORMOSA_TAIGI is not set in db.sh."
+if [ -z "${AISHELL}" ]; then
+  log "Error: \$AISHELL is not set in db.sh."
   exit 2
 fi
 
 
-log "Download data to ${FORMOSA_TAIGI}"
-if [ ! -d "${FORMOSA_TAIGI}" ]; then
-    mkdir -p "${FORMOSA_TAIGI}"
+log "Download data to ${AISHELL}"
+if [ ! -d "${AISHELL}" ]; then
+    mkdir -p "${AISHELL}"
 fi
 # To absolute path
-FORMOSA_TAIGI=$(cd ${FORMOSA_TAIGI}; pwd)
+AISHELL=$(cd ${AISHELL}; pwd)
 
-echo local/download_and_untar.sh ${download_opt} "${FORMOSA_TAIGI}" "${data_url}" SuiSiann-0.2.1
-local/download_and_untar.sh ${download_opt} "${FORMOSA_TAIGI}" "${data_url}" SuiSiann-0.2.1
-#echo local/download_and_untar.sh ${download_opt} "${FORMOSA_TAIGI}" "${data_url}" resource_suisiann
-#local/download_and_untar.sh ${download_opt} "${FORMOSA_TAIGI}" "${data_url}" resource_suisiann
+echo local/download_and_untar.sh ${download_opt} "${AISHELL}" "${data_url}" data_aishell
+local/download_and_untar.sh ${download_opt} "${AISHELL}" "${data_url}" data_aishell
+echo local/download_and_untar.sh ${download_opt} "${AISHELL}" "${data_url}" resource_aishell
+local/download_and_untar.sh ${download_opt} "${AISHELL}" "${data_url}" resource_aishell
 
-suisiann_audio_dir=${FORMOSA_TAIGI}/0.2.1/ImTong
-suisiann_text=${FORMOSA_TAIGI}/0.2.1/SuiSiann.csv
+aishell_audio_dir=${AISHELL}/data_aishell/wav
+aishell_text=${AISHELL}/data_aishell/transcript/aishell_transcript_v0.8.txt
 
 log "Data Preparation"
 train_dir=data/local/train
@@ -76,7 +76,7 @@ mkdir -p $test_dir
 mkdir -p $tmp_dir
 
 # find wav audio file for train, dev and test resp.
-find $suisiann_audio_dir -iname "*.wav" > $tmp_dir/wav.flist
+find $aishell_audio_dir -iname "*.wav" > $tmp_dir/wav.flist
 n=$(wc -l < $tmp_dir/wav.flist)
 [ $n -ne 141925 ] && \
   log Warning: expected 141925 data data files, found $n
@@ -93,7 +93,7 @@ for dir in $train_dir $dev_dir $test_dir; do
   sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{print $NF}' > $dir/utt.list
   sed -e 's/\.wav//' $dir/wav.flist | awk -F '/' '{i=NF-1;printf("%s %s\n",$NF,$i)}' > $dir/utt2spk_all
   paste -d' ' $dir/utt.list $dir/wav.flist > $dir/wav.scp_all
-  utils/filter_scp.pl -f 1 $dir/utt.list $suisiann_text > $dir/transcripts.txt
+  utils/filter_scp.pl -f 1 $dir/utt.list $aishell_text > $dir/transcripts.txt
   awk '{print $1}' $dir/transcripts.txt > $dir/utt.list
   utils/filter_scp.pl -f 1 $dir/utt.list $dir/utt2spk_all | sort -u > $dir/utt2spk
   utils/filter_scp.pl -f 1 $dir/utt.list $dir/wav.scp_all | sort -u > $dir/wav.scp
