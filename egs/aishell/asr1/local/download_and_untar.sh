@@ -28,7 +28,7 @@ if [ ! -d "$data" ]; then
 fi
 
 part_ok=false
-list="data_aishell resource_aishell"
+list="SuiSiann-0.2.1"
 for x in $list; do
   if [ "$part" == $x ]; then part_ok=true; fi
 done
@@ -48,27 +48,27 @@ if [ -f $data/$part/.complete ]; then
 fi
 
 # sizes of the archive files in bytes.
-sizes="15582913665 1246920"
+sizes="2457692160"
 
-if [ -f $data/$part.tgz ]; then
-  size=$(/bin/ls -l $data/$part.tgz | awk '{print $5}')
+if [ -f $data/$part.tar ]; then
+  size=$(/bin/ls -l $data/$part.tar | awk '{print $5}')
   size_ok=false
   for s in $sizes; do if [ $s == $size ]; then size_ok=true; fi; done
   if ! $size_ok; then
-    echo "$0: removing existing file $data/$part.tgz because its size in bytes $size"
+    echo "$0: removing existing file $data/$part.tar because its size in bytes $size"
     echo "does not equal the size of one of the archives."
-    rm $data/$part.tgz
+    rm $data/$part.tar
   else
-    echo "$data/$part.tgz exists and appears to be complete."
+    echo "$data/$part.tar exists and appears to be complete."
   fi
 fi
 
-if [ ! -f $data/$part.tgz ]; then
+if [ ! -f $data/$part.tar ]; then
   if ! command -v wget >/dev/null; then
     echo "$0: wget is not installed."
     exit 1;
   fi
-  full_url=$url/$part.tgz
+  full_url=$url/$part.tar
   echo "$0: downloading data from $full_url.  This may take some time, please be patient."
 
   cd $data || exit 1
@@ -80,26 +80,26 @@ fi
 
 cd $data || exit 1
 
-if ! tar -xvzf $part.tgz; then
-  echo "$0: error un-tarring archive $data/$part.tgz"
+if ! tar -xvf $part.tar -C SuiSiann-0.2.1.tar; then
+  echo "$0: error un-tarring archive $data/$part.tar"
   exit 1;
 fi
 
 touch $data/$part/.complete
 
-if [ $part == "data_aishell" ]; then
+if [ $part == "SuiSiann-0.2.1" ]; then
   cd $data/$part/wav || exit 1
-  for wav in ./*.tar.gz; do
+  for wav in ./*.tar; do
     echo "Extracting wav from $wav"
-    tar -zxf $wav && rm $wav
+    tar -xf $wav && rm $wav
   done
 fi
 
-echo "$0: Successfully downloaded and un-tarred $data/$part.tgz"
+echo "$0: Successfully downloaded and un-tarred $data/$part.tar"
 
 if $remove_archive; then
-  echo "$0: removing $data/$part.tgz file since --remove-archive option was supplied."
-  rm $data/$part.tgz
+  echo "$0: removing $data/$part.tar file since --remove-archive option was supplied."
+  rm $data/$part.tar
 fi
 
 exit 0;

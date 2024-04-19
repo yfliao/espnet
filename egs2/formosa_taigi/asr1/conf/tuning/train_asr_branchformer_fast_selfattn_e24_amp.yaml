@@ -5,8 +5,8 @@ encoder_conf:
     output_size: 256
     use_attn: true
     attention_heads: 4
-    attention_layer_type: rel_selfattn
-    pos_enc_layer_type: rel_pos
+    attention_layer_type: fast_selfattn
+    pos_enc_layer_type: abs_pos
     rel_pos_type: latest
     use_cgmlp: true
     cgmlp_linear_units: 2048
@@ -84,24 +84,3 @@ specaug_conf:
     - 0.
     - 0.05
     num_time_mask: 10
-
-freeze_param: [
-"frontend.upstream"
-]
-
-frontend: s3prl
-frontend_conf:
-   frontend_conf:
-#      upstream: hubert_large_ll60k	# input_size: 1024 # Note: If the upstream is changed, please change the input_size in the preencoder.
-      upstream: hubert_base		# input_size: 768  # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wav2vec2_large_960	# input_size: 1024 # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wav2vec2_small		# input_size: 768  # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wavlm_large		# input_size: 1024 # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wavlm_base		# input_size: 768  # Note: If the upstream is changed, please change the input_size in the preencoder.
-   download_dir: ./hub
-   multilayer_feature: True
-
-preencoder: linear
-preencoder_conf:
-   input_size: 768  # Note: If the upstream is changed, please change this value accordingly.
-   output_size: 80

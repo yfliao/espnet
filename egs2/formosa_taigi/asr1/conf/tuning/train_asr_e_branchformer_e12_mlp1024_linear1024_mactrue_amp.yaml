@@ -1,27 +1,27 @@
 # network architecture
 # encoder related
-encoder: branchformer
+encoder: e_branchformer
 encoder_conf:
     output_size: 256
-    use_attn: true
     attention_heads: 4
     attention_layer_type: rel_selfattn
     pos_enc_layer_type: rel_pos
     rel_pos_type: latest
-    use_cgmlp: true
-    cgmlp_linear_units: 2048
+    cgmlp_linear_units: 1024
     cgmlp_conv_kernel: 31
     use_linear_after_conv: false
     gate_activation: identity
-    merge_method: concat
-    cgmlp_weight: 0.5               # used only if merge_method is "fixed_ave"
-    attn_branch_drop_rate: 0.0      # used only if merge_method is "learned_ave"
-    num_blocks: 24
+    num_blocks: 12
     dropout_rate: 0.1
     positional_dropout_rate: 0.1
     attention_dropout_rate: 0.1
     input_layer: conv2d
-    stochastic_depth_rate: 0.0
+    layer_drop_rate: 0.0
+    linear_units: 1024
+    positionwise_layer_type: linear
+    use_ffn: true
+    macaron_ffn: true
+    merge_conv_kernel: 31
 
 # decoder related
 decoder: transformer
@@ -48,9 +48,6 @@ batch_bins: 25000000
 accum_grad: 1
 grad_clip: 5
 max_epoch: 60
-val_scheduler_criterion:
-    - valid
-    - acc
 best_model_criterion:
 -   - valid
     - acc
@@ -84,24 +81,3 @@ specaug_conf:
     - 0.
     - 0.05
     num_time_mask: 10
-
-freeze_param: [
-"frontend.upstream"
-]
-
-frontend: s3prl
-frontend_conf:
-   frontend_conf:
-#      upstream: hubert_large_ll60k	# input_size: 1024 # Note: If the upstream is changed, please change the input_size in the preencoder.
-      upstream: hubert_base		# input_size: 768  # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wav2vec2_large_960	# input_size: 1024 # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wav2vec2_small		# input_size: 768  # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wavlm_large		# input_size: 1024 # Note: If the upstream is changed, please change the input_size in the preencoder.
-#      upstream: wavlm_base		# input_size: 768  # Note: If the upstream is changed, please change the input_size in the preencoder.
-   download_dir: ./hub
-   multilayer_feature: True
-
-preencoder: linear
-preencoder_conf:
-   input_size: 768  # Note: If the upstream is changed, please change this value accordingly.
-   output_size: 80

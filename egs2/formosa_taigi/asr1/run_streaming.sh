@@ -9,34 +9,26 @@ train_set=train
 valid_set=dev
 test_sets="dev test"
 
-#asr_config=conf/tuning/train_asr_whisper_medium_finetune.yaml
-#inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
+asr_config=conf/train_asr_streaming_transformer.yaml
+inference_config=conf/decode_asr_streaming.yaml
 
-asr_config=conf/tuning/train_asr_whisper_medium_lora_finetune.yaml
-inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
-
-lm_config=conf/train_lm_transformer.yaml
-use_lm=false
+lm_config=conf/train_lm.yaml
+use_lm=true
 use_wordlm=false
 
 # speed perturbation related
 # (train_set will be "${train_set}_sp" if speed_perturb_factors is specified)
 speed_perturb_factors="0.9 1.0 1.1"
 
-./asr.sh \
-    --nj 32 \
-    --ngpu 2 \
-    --gpu_inference true \
-    --inference_nj 1 \
-    --lang zh \
-    --token_type whisper_multilingual \
-    --feats_normalize "" \
-    --audio_format "flac.ark" \
-    --feats_type raw \
+./asr.sh                                               \
+    --use_streaming true                               \
+    --lang zh                                          \
+    --audio_format wav                                 \
+    --feats_type raw                                   \
+    --token_type char                                  \
     --use_lm ${use_lm}                                 \
     --use_word_lm ${use_wordlm}                        \
     --lm_config "${lm_config}"                         \
-    --cleaner whisper_basic                            \
     --asr_config "${asr_config}"                       \
     --inference_config "${inference_config}"           \
     --train_set "${train_set}"                         \
