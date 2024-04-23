@@ -24,13 +24,13 @@ with open('data/all/wav.scp', 'w') as file:
     for row in wav:
         file.write(' '.join(map(str, row)) + '\n')
 
-with open('data/all/textc', 'w') as file:
+with open('data/all/text', 'w') as file:
     for row in textc:
         file.write(' '.join(map(str, row)) + '\n')
 
-with open('data/all/textp', 'w') as file:
-    for row in textp:
-        file.write(' '.join(map(str, row)) + '\n')
+#with open('data/all/text', 'w') as file:
+#    for row in textp:
+#        file.write(' '.join(map(str, row)) + '\n')
 
 with open('data/all/utt2spk', 'w') as file:
     for row in utt2spk:
