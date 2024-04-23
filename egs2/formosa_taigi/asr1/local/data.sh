@@ -49,3 +49,11 @@ cd ../../
 create_subset "train" "train_speakers.list"
 create_subset "dev" "dev_speakers.list"
 create_subset "test" "test_speakers.list"
+
+# remove space in text
+for x in train dev test; do
+  cp data/${x}/text data/${x}/text.org
+  paste -d " " <(cut -f 1 -d" " data/${x}/text.org) <(cut -f 2- -d" " data/${x}/text.org | tr -d " ") \
+      > data/${x}/text
+  rm data/${x}/text.org
+done
