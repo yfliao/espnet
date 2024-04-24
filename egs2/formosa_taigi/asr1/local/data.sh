@@ -53,10 +53,10 @@ create_subset "train" "train_utterances.list"
 create_subset "dev" "dev_utterances.list"
 create_subset "test" "test_utterances.list"
 
-## remove space in text
-#for x in all train dev test; do
-#  cp data/${x}/text data/${x}/text.org
-#  paste -d " " <(cut -f 1 -d" " data/${x}/text.org) <(cut -f 2- -d" " data/${x}/text.org | tr -d " ") \
-#      > data/${x}/text
-#  rm data/${x}/text.org
-#done
+# remove space in text
+for x in all train dev test; do
+  cp data/${x}/text data/${x}/text.org
+  paste -d " " <(cut -f 1 -d" " data/${x}/text.org) <(cut -f 2- -d" " data/${x}/text.org | tr -d " ") \
+      > data/${x}/text
+  rm data/${x}/text.org
+done
