@@ -26,7 +26,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --inference_nj 32 \
     --ngpu 2 \
     --lang zh \
-    --audio_format "wav" \
+    --audio_format wav \
     --feats_type raw \
     --token_type char \
     --use_lm ${use_lm}                                 \

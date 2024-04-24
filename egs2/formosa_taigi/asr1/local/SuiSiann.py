@@ -5,7 +5,6 @@ import csv
 from pathlib import Path
 
 dir = os.getcwd()
-
 wav=[]
 textc=[]
 textp=[]
@@ -18,7 +17,7 @@ with open('downloads/0.2.1/SuiSiann.csv', 'r') as csvfile:
         wav.append([id, dir+"/downloads/0.2.1/"+row['音檔']])
         textc.append([id, row['漢字']])
         textp.append([id, row['羅馬字']])
-        utt2spk.append([id, id])
+        utt2spk.append([id, 'Spk01'])
 
 with open('data/all/wav.scp', 'w') as file:
     for row in wav:
