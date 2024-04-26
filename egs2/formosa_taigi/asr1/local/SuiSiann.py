@@ -24,9 +24,9 @@ with open('downloads/0.2.1/SuiSiann.csv', 'r') as csvfile:
         wav.append([id, dir+"/downloads/0.2.1/"+row['音檔']])
         
         zh=row['漢字'].replace(' ','').replace('……','，').strip(' ')
-        tailo=row['羅馬字'].replace('“','').replace('”','').replace('...',',').strip(' "').lower()
+        tailo=row['羅馬字'].replace('“','').replace('”','').replace('...',',').strip(' "').lower().strip(' ')
         tone=regex.sub(' ', 拆文分析器.建立句物件(tailo).轉音(臺灣閩南語羅馬字拼音).看語句().replace('-', ' '))
-        tone=re.sub(' +',' ', tone)
+        tone=re.sub(' +',' ', tone).strip(' ')
         syllable=re.sub('[0-9]','', tone)
 
         textc.append([id, zh])
