@@ -43,6 +43,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --asr_speech_fold_length 512 \
     --asr_text_fold_length 150 \
     --lm_fold_length 150 \
-    --lm_train_text "data/${all_set}/text" "$@" \
-    --bpe_train_text "data/${all_set}/text" "$@" \
-    --feats_normalize uttmvn
+    --lm_train_text "data/${train_set}/text" "$@" \
+    --bpe_train_text "data/${train_set}/text" "$@" \
+    --feats_normalize uttmvn \
+    --asr_args "--max_epoch 200"

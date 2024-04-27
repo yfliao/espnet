@@ -20,6 +20,7 @@ regex = re.compile('[^a-zA-Z0-9\s]')
 with open('downloads/0.2.1/SuiSiann.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
+        
         id = Path(row['音檔']).stem
         wav.append([id, dir+"/downloads/0.2.1/"+row['音檔']])
         

@@ -11,6 +11,16 @@ if [ ! -f SuiSiann-0.2.1.tar ]; then
 fi
 tar vxf SuiSiann-0.2.1.tar
 
+if [ ! -f musan.tar.gz ]; then
+	wget https://www.openslr.org/resources/17/musan.tar.gz
+fi
+tar vxfz musan.tar.gz
+
+if [ ! -f rirs_noises.zip ]; then
+	wget https://www.openslr.org/resources/28/rirs_noises.zip
+fi
+unzip rirs_noises.zip
+
 cd ..
 
 python local/SuiSiann.py
@@ -51,4 +61,3 @@ create_subset() {
 create_subset "train" "train_utterances.list"
 create_subset "dev" "dev_utterances.list"
 create_subset "test" "test_utterances.list"
-
