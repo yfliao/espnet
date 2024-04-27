@@ -55,6 +55,10 @@ best_model_criterion:
 -   - valid
     - acc
     - max
+early_stopping_criterion:
+    - valid
+    - cer_ctc
+    - min
 keep_nbest_models: 10
 
 optim: adam
