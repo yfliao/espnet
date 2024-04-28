@@ -21,6 +21,11 @@ if [ ! -f rirs_noises.zip ]; then
 	unzip rirs_noises.zip
 fi
 
+if [ ! -f rirs_noises.zip ]; then
+	https://github.com/karoldvl/ESC-50/archive/master.zip
+	unzip master.zip
+fi
+
 cd ..
 
 python local/SuiSiann.py
