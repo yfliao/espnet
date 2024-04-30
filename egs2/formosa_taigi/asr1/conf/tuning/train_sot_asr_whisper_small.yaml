@@ -1,0 +1,78 @@
+normalize: null
+
+freeze_param: [
+    "decoder.decoders.token_embedding.ori_emb"
+]
+
+encoder: whisper
+encoder_conf:
+    whisper_model: small
+    dropout_rate: 0.0
+    use_specaug: false
+
+decoder: whisper
+decoder_conf:
+    whisper_model: small
+    dropout_rate: 0.0
+
+# preprocessor related
+preprocessor: default
+preprocessor_conf:
+    whisper_language: "zh"
+    whisper_task: "transcribe"
+
+
+model_conf:
+    ctc_weight: 0.0
+    lsm_weight: 0.1
+    length_normalized_loss: false
+    extract_feats_in_collect_stats: false
+    sym_sos: "<|startoftranscript|>"
+    sym_eos: "<|endoftext|>"
+    # do_pad_trim: true         # should be set when doing zero-shot inference
+
+
+frontend: null
+input_size: 1                   # to prevent build_model() from complaining
+
+
+
+
+# minibatch related
+seed: 2022
+log_interval: 100
+num_att_plot: 0
+num_workers: 4
+sort_in_batch: descending       # how to sort data in making batch
+sort_batch: descending          # how to sort created batches
+batch_type: numel
+#batch_bins: 2000000
+batch_bins: 6250000
+accum_grad: 4
+max_epoch: 3
+patience: none
+init: none
+best_model_criterion:
+-   - valid
+    - acc
+    - max
+early_stopping_criterion:
+    - valid
+    - cer_ctc
+    - min
+keep_nbest_models: 3
+
+use_amp: true
+cudnn_deterministic: false
+cudnn_benchmark: false
+
+optim: adam
+grad_clip: 1.0
+optim_conf:
+    lr: 0.000001
+    weight_decay: 0.000001
+scheduler: warmuplr
+scheduler_conf:
+    warmup_steps: 1500
+
+specaug: null
