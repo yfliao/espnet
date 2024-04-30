@@ -9,9 +9,9 @@ train_set=train
 valid_set=dev
 test_sets="dev test"
 
-asr_config=conf/tuning/train_asr_whisper_medium_finetune.yaml
-#asr_config=conf/tuning/train_asr_whisper_medium_lora_finetune.yaml
-#sr_config=cconf/tuning/train_asr_whisper_large_lora_finetune.yaml
+asr_config=conf/tuning/train_asr_whisper_small_finetune.yaml
+#asr_config=conf/tuning/train_asr_whisper_medium_finetune.yaml
+#asr_config=conf/tuning/train_asr_whisper_large_finetune.yaml
 inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
 
 lm_config=conf/train_lm_transformer.yaml
