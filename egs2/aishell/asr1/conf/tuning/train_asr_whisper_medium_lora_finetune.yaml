@@ -66,9 +66,8 @@ cudnn_deterministic: false
 cudnn_benchmark: false
 
 # LoRA finetune related
-use_adapter: true
-adapter: lora
-adapter_conf:
+use_lora: true
+lora_conf:
     rank: 8
     alpha: 16
     dropout_rate: 0.05
@@ -86,7 +85,3 @@ optim_conf:
 scheduler: warmuplr
 scheduler_conf:
     warmup_steps: 1500
-
-num_workers: 4      # num of workers of data loader
-use_amp: true      # automatic mixed precision
-unused_parameters: false    # set as true if some params are unused in DDP
