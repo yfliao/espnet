@@ -9,10 +9,7 @@ train_set=train
 valid_set=dev
 test_sets="dev test"
 
-#asr_config=conf/tuning/train_asr_whisper_medium_finetune.yaml
-#inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
-
-asr_config=conf/tuning/train_asr_whisper_medium_lora_finetune.yaml
+asr_config=conf/tuning/train_asr_whisper_medium_finetune.yaml
 inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
 
 lm_config=conf/train_lm_transformer.yaml
@@ -25,7 +22,6 @@ speed_perturb_factors="0.9 1.0 1.1"
 
 ./asr.sh \
     --nj 32 \
-    --ngpu 2 \
     --gpu_inference true \
     --inference_nj 1 \
     --lang zh \
