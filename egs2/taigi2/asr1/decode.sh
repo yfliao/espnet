@@ -1,1 +1,0 @@
-../asr1/decode.sh
