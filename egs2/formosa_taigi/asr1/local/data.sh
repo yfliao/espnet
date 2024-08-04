@@ -21,9 +21,9 @@ if [ ! -f rirs_noises.zip ]; then
 	unzip rirs_noises.zip
 fi
 
-if [ ! -f rirs_noises.zip ]; then
+if [ ! -f ESC-50-master.zip ]; then
 	https://github.com/karoldvl/ESC-50/archive/master.zip
-	unzip master.zip
+	unzip ESC-50-master.zip
 fi
 
 cd ..

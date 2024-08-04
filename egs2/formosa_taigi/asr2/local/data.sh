@@ -6,9 +6,9 @@ mkdir -p data/all
 mkdir -p downloads
 cd downloads
 
-if [ ! -f SuiSiann-0.2.1.tar ]; then
-	wget https://tongan-puntiunn.ithuan.tw/SuiSiann/SuiSiann-0.2.1.tar
-	tar vxf SuiSiann-0.2.1.tar
+if [ ! -f TAT-MOE-Lavalier.zip ]; then
+	wget https://tggl.naer.edu.tw/corpus_files/TAT-MOE-Lavalier.zip
+	unzip TAT-MOE-Lavalier.zip
 fi
 
 if [ ! -f musan.tar.gz ]; then
@@ -21,9 +21,9 @@ if [ ! -f rirs_noises.zip ]; then
 	unzip rirs_noises.zip
 fi
 
-if [ ! -f rirs_noises.zip ]; then
-	https://github.com/karoldvl/ESC-50/archive/master.zip
-	unzip master.zip
+if [ ! -f ESC-50-master.zip ]; then
+        https://github.com/karoldvl/ESC-50/archive/master.zip
+        unzip ESC-50-master.zip
 fi
 
 cd ..
