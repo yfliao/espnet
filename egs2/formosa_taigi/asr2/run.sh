@@ -7,8 +7,8 @@ set -o pipefail
 
 all_set=all
 train_set=train
-valid_set=dev
-test_sets="dev test"
+valid_set=eval
+test_sets="eval test"
 
 #asr_config=conf/train_asr_transformer.yaml
 asr_config=conf/train_asr_branchformer.yaml

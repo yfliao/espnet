@@ -2,7 +2,7 @@
 
 . ./path.sh
 
-mkdir -p data/all
+mkdir -p data/train data/eval data/test
 mkdir -p downloads
 cd downloads
 
@@ -21,58 +21,27 @@ if [ ! -f rirs_noises.zip ]; then
 	unzip rirs_noises.zip
 fi
 
-if [ ! -f ESC-50-master.zip ]; then
-        https://github.com/karoldvl/ESC-50/archive/master.zip
-        unzip ESC-50-master.zip
+if [ ! -f master.zip ]; then
+        wget https://github.com/karoldvl/ESC-50/archive/master.zip
+        unzip master.zip
 fi
 
 cd ..
 
-mkdir -p data/train data/eval data/test
-
-find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$3"/"$4"/"$5"/"$6".wav"}' > data/train/wav.scp
-find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$3"/"$4"/"$5"/"$6".wav"}' > data/eval/wav.scp
-find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$3"/"$4"/"$5"/"$6".wav"}' > data/test/wav.scp
+find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/train/wav.scp
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/eval/wav.scp
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/test/wav.scp
 
 find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/train/utt2spk
 find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/eval/utt2spk
 find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/test/utt2spk
 
-python local/SuiSiann.py
-cp data/all/texts data/all/text
-utils/fix_data_dir.sh data/all
+python local/TAT-MOE.py
 
-# Assuming all data is in a directory called 'data/all'
-cd data/all
+cp data/train/tailo-toneless.txt data/train/text
+cp data/eval/tailo-toneless.txt data/eval/text
+cp data/test/tailo-toneless.txt data/test/text
 
-# Shuffle the utterance list to ensure randomness
-awk '{print $1}' utt2spk | shuf > shuffled_utterances.list
-
-# Count total utterances and calculate splits
-total_utterances=$(cat shuffled_utterances.list | wc -l)
-echo total_utterances=$total_utterances
-num_train=$(echo "$total_utterances * 0.9 / 1" | bc)
-num_dev=$(echo "($total_utterances - $num_train) / 2 / 1" | bc)
-num_test=$num_dev
-echo "num_train, num_dev, num_test=$num_train, $num_dev, $num_test"
-
-# Create utterance subsets
-head -n $num_train shuffled_utterances.list > train_utterances.list
-tail -n +$((num_train + 1)) shuffled_utterances.list | head -n $num_dev > dev_utterances.list
-tail -n $num_test shuffled_utterances.list > test_utterances.list
-
-# Create training, development, and testing subsets
-cd ../../
-
-# Function to create data subsets
-create_subset() {
-    subset=$1
-    utterances_list=$2
-    mkdir -p data/$subset
-    utils/subset_data_dir.sh --utt-list data/all/$utterances_list data/all data/$subset
-    utils/fix_data_dir.sh data/$subset
-}
-
-create_subset "train" "train_utterances.list"
-create_subset "dev" "dev_utterances.list"
-create_subset "test" "test_utterances.list"
+utils/fix_data_dir.sh data/train
+utils/fix_data_dir.sh data/eval
+utils/fix_data_dir.sh data/test
