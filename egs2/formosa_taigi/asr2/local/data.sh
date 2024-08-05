@@ -28,6 +28,16 @@ fi
 
 cd ..
 
+mkdir -p data/train data/eval data/test
+
+find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$3"/"$4"/"$5"/"$6".wav"}' > data/train/wav.scp
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$3"/"$4"/"$5"/"$6".wav"}' > data/eval/wav.scp
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$3"/"$4"/"$5"/"$6".wav"}' > data/test/wav.scp
+
+find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/train/utt2spk
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/eval/utt2spk
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/test/utt2spk
+
 python local/SuiSiann.py
 cp data/all/texts data/all/text
 utils/fix_data_dir.sh data/all

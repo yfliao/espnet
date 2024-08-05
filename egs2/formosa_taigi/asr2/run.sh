@@ -25,7 +25,7 @@ speed_perturb_factors="0.9 1.0 1.1"
 ./asr.sh \
     --nj 32 \
     --inference_nj 32 \
-    --ngpu 2 \
+    --ngpu 8 \
     --lang en \
     --audio_format wav \
     --feats_type raw \
