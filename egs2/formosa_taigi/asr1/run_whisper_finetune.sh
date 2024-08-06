@@ -5,6 +5,17 @@ set -e
 set -u
 set -o pipefail
 
+#Choose 台文漢字 or 台羅 for training (zh en )
+traing_data="en"
+if [ "$traing_data" = "ch" ]; then
+  lang="zh"
+  local_data_opts="textc"
+fi
+if [ "$traing_data" = "en" ]; then
+  lang="en"
+  local_data_opts="texts"
+fi
+
 train_set=train
 valid_set=dev
 test_sets="dev test"
@@ -27,7 +38,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --ngpu 8 \
     --gpu_inference true \
     --inference_nj 1 \
-    --lang en \
+    --lang ${lang} \
     --token_type whisper_multilingual \
     --feats_normalize "" \
     --audio_format "wav" \
@@ -46,4 +57,5 @@ speed_perturb_factors="0.9 1.0 1.1"
     --asr_text_fold_length 150 \
     --lm_fold_length 150 \
     --lm_train_text "data/${train_set}/text" "$@" \
-    --asr_args "--max_epoch 100"
+    --asr_args "--max_epoch 5" \
+    --local_data_opts ${local_data_opts}
