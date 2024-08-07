@@ -31,6 +31,13 @@ pip install tai5-uan5_gian5-gi2_kang1-ku7  # 安裝臺灣言語工具
 台灣言語工具參考網址[link](https://i3thuan5.github.io/tai5-uan5_gian5-gi2_kang1-ku7/%E5%AE%89%E8%A3%9D.html)
 ## 語料
 使用的是來自意傳公司的臺灣媠聲資料集 [SuíSiann Dataset](https://suisiann-dataset.ithuan.tw/)，內有閩南語wav還有台羅和漢字及其他資訊，整個資料集共3467句，我們團隊有增加雜訊並擴充成兩倍
+在我們的腳本執行時，會將資料集分成train、dev、test
+
+|dataset|資料量|演講者數量|
+|---|---|---|
+|SuíSiann-train|6240|1|
+|SuíSiann-dev|347|1|
+|SuíSiann-test|347|1|
 
 ## 模型使用&腳本
 - Transformer
