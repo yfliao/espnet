@@ -72,7 +72,7 @@ elif [[ "$lang" == "zh" ]]; then
     cp data/eval/hanlo.txt data/eval/text
     cp data/test/hanlo.txt data/test/text
 else
-    echo "Unsupported language: $LANGUAGE"
+    echo "Unsupported language: $lang"
     exit 1
 fi
 

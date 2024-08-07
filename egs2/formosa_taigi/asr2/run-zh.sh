@@ -22,14 +22,14 @@ use_wordlm=false
 speed_perturb_factors="0.9 1.0 1.1"
 
 ./asr.sh \
-    --nj 32 \
-    --inference_nj 32 \
+    --nj 64 \
+    --inference_nj 64 \
     --ngpu 8 \
     --lang zh \
     --audio_format wav \
     --feats_type raw \
     --token_type bpe \
-    --nbpe 6901 \
+    --nbpe 6888 \
     --use_lm ${use_lm}                                 \
     --use_word_lm ${use_wordlm}                        \
     --lm_config "${lm_config}"                         \
@@ -45,5 +45,5 @@ speed_perturb_factors="0.9 1.0 1.1"
     --lm_train_text "data/${train_set}/text downloads/sentences-hanlo-cleaned-index.txt downloads/words-hanlo-cleaned-index.txt" "$@" \
     --bpe_train_text "data/${train_set}/text downloads/sentences-hanlo-cleaned-index.txt downloads/words-hanlo-cleaned-index.txt" "$@" \
     --feats_normalize uttmvn \
-    --asr_args "--max_epoch 20" \
+    --asr_args "--max_epoch 100" \
     --local_data_opts "--lang zh"
