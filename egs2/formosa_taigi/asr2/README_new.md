@@ -27,8 +27,10 @@ Lora參考網址 [link](https://github.com/microsoft/LoRA)
 ```python
 conda activate espnet
 pip install tai5-uan5_gian5-gi2_kang1-ku7  # 安裝臺灣言語工具
+pip install zhon
 ```
-台灣言語工具參考網址[link](https://i3thuan5.github.io/tai5-uan5_gian5-gi2_kang1-ku7/%E5%AE%89%E8%A3%9D.html)
+台灣言語工具參考網址[link](https://i3thuan5.github.io/tai5-uan5_gian5-gi2_kang1-ku7/%E5%AE%89%E8%A3%9D.html) \
+zhon參考網址[link](https://pypi.org/project/zhon/)
 
 ## 語料
 **TAT(Taiwanese Across Taiwan)為台語朗讀語料（reading speech）**，是以原生台文文本，收集來自台灣各地不同腔調的台語語音，並同時以6隻麥克風進行錄製。錄好的台語語音，經由兩次人工校正文本後，整理成可供語音辨認技術研究與開發使用之語音語料庫。\
@@ -36,6 +38,12 @@ pip install tai5-uan5_gian5-gi2_kang1-ku7  # 安裝臺灣言語工具
 - Train
 - Eval
 - Test 
+
+|dataset|資料量|演講者數量|
+|---|---|---|
+|TAT-MOE-train|80936|291|
+|TAT-MOE-eval|13269|47|
+|TAT-MOE-test|13087|45|
 
 **麥克風(microphones)** 資訊: 
 - 領夾式麥克風（lavalier）
