@@ -42,7 +42,7 @@ model_conf:
 
 # minibatch related
 batch_type: numel
-batch_bins: 6250000
+batch_bins: 125000000 # 62500000
 
 # optimization related
 accum_grad: 1

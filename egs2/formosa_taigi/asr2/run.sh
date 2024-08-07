@@ -46,4 +46,5 @@ speed_perturb_factors="0.9 1.0 1.1"
     --lm_train_text "data/${train_set}/text" "$@" \
     --bpe_train_text "data/${train_set}/text" "$@" \
     --feats_normalize uttmvn \
-    --asr_args "--max_epoch 100"
+    --asr_args "--max_epoch 100" \
+    --local_data_opts "--lang zh"

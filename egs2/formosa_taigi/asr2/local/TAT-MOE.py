@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import string
 from zhon.hanzi import punctuation
 from 臺灣言語工具.解析整理.拆文分析器 import 拆文分析器
 from 臺灣言語工具.音標系統.閩南語.臺灣閩南語羅馬字拼音 import 臺灣閩南語羅馬字拼音
@@ -30,13 +31,15 @@ def remove_tones(text):
 
 # Replace punctuation with space and remove duplicate spaces
 def clean_text_hanlo(text):
-    text = re.sub(r'[%s]+'% punctuation, ' ', text.lower())
+    text = re.sub(r"[%s]+" % punctuation, ' ', text.lower())
+    text = re.sub(r"[%s]+" % string.punctuation, ' ', text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
 # Replace punctuation with space and remove duplicate spaces
 def clean_text_tailo(text):
-    text = re.sub(r'[%s]+'% punctuation, ' ', text.lower())
+    text = re.sub(r"[%s]+" % punctuation, ' ', text.lower())
+#    text = re.sub(r"[%s]+" % string.punctuation, ' ', text)
     text = remove_invalid_tailo(text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
