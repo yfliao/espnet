@@ -51,7 +51,7 @@ sort_in_batch: descending       # how to sort data in making batch
 sort_batch: descending          # how to sort created batches
 batch_type: numel
 #batch_bins: 12000000            # good for 8 * RTX 3090 24G
-batch_bins: 6250000
+batch_bins:  64000000
 accum_grad: 4
 max_epoch: 10
 patience: none
@@ -71,8 +71,10 @@ cudnn_deterministic: false
 cudnn_benchmark: false
 
 # LoRA finetune related
-use_lora: true
-lora_conf:
+use_adapter: true
+adapter: lora
+save_strategy: adapter
+adapter_conf:
     rank: 8
     alpha: 16
     dropout_rate: 0.05

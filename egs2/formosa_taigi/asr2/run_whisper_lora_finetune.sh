@@ -6,12 +6,12 @@ set -u
 set -o pipefail
 
 train_set=train
-valid_set=dev
-test_sets="dev test"
+valid_set=eval
+test_sets="eval test"
 
-asr_config=conf/tuning/train_asr_whisper_small_lora_finetune.yaml
+#asr_config=conf/tuning/train_asr_whisper_small_lora_finetune.yaml
 #asr_config=conf/tuning/train_asr_whisper_medium_lora_finetune.yaml
-#sr_config=cconf/tuning/train_asr_whisper_large_lora_finetune.yaml
+asr_config=conf/tuning/train_asr_whisper_large_lora_finetune.yaml
 inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
 
 lm_config=conf/train_lm_transformer.yaml
@@ -23,11 +23,11 @@ use_wordlm=false
 speed_perturb_factors="0.9 1.0 1.1"
 
 ./asr.sh \
-    --nj 32 \
-    --ngpu 2 \
+    --nj 64 \
+    --ngpu 8 \
     --gpu_inference true \
     --inference_nj 1 \
-    --lang en \
+    --lang zh \
     --token_type whisper_multilingual \
     --feats_normalize "" \
     --audio_format "wav" \
@@ -42,8 +42,9 @@ speed_perturb_factors="0.9 1.0 1.1"
     --valid_set "${valid_set}"                         \
     --test_sets "${test_sets}"                         \
     --speed_perturb_factors "${speed_perturb_factors}" \
-    --asr_speech_fold_length 512 \
-    --asr_text_fold_length 150 \
-    --lm_fold_length 150 \
-    --lm_train_text "data/${train_set}/text" "$@" \
-    --asr_args "--max_epoch 100"
+    --asr_speech_fold_length 1024 \
+    --asr_text_fold_length 300 \
+    --lm_fold_length 300 \
+    --lm_train_text "data/${train_set}/text downloads/sentences-hanlo-cleaned-index.txt downloads/words-hanlo-cleaned-index.txt" "$@" \
+    --asr_args "--max_epoch 100" \
+    --local_data_opts "--lang zh"
