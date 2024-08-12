@@ -61,16 +61,26 @@ find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//
 python local/TAT-MOE.py
 
 # Your script logic here, using $LANGUAGE
-if [[ "$lang" == "en" ]]; then
-    echo "Tailo-Toneless"
-    cp data/train/tailo-toneless.txt data/train/text
-    cp data/eval/tailo-toneless.txt data/eval/text
-    cp data/test/tailo-toneless.txt data/test/text
-elif [[ "$lang" == "zh" ]]; then
+if [[ "$lang" == "hanlo" ]]; then
     echo "Hanlo"
     cp data/train/hanlo.txt data/train/text
     cp data/eval/hanlo.txt data/eval/text
     cp data/test/hanlo.txt data/test/text
+elif [[ "$lang" == "tailo" ]]; then
+    echo "Hanlo"
+    cp data/train/tailo.txt data/train/text
+    cp data/eval/tailo.txt data/eval/text
+    cp data/test/tailo.txt data/test/text
+elif [[ "$lang" == "tailo-tone" ]]; then
+    echo "Hanlo"
+    cp data/train/tailo-tone.txt data/train/text
+    cp data/eval/tailo-tone.txt data/eval/text
+    cp data/test/tailo-tone.txt data/test/text
+elif [[ "$lang" == "tailo-toneless" ]]; then
+    echo "tailo-toneless"
+    cp data/train/tailo-toneless.txt data/train/text
+    cp data/eval/tailo-toneless.txt data/eval/text
+    cp data/test/tailo-toneless.txt data/test/text
 else
     echo "Unsupported language: $lang"
     exit 1
