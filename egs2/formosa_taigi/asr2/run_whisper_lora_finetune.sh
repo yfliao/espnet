@@ -26,7 +26,11 @@ speed_perturb_factors="0.9 1.0 1.1"
     --nj 224 \
     --ngpu 8 \
     --gpu_inference true \
+<<<<<<< HEAD
     --inference_nj 1 \
+=======
+    --inference_nj 224 \
+>>>>>>> 0f941d487d9164cbee4fed5cf9eeb96b843c3013
     --lang en \
     --token_type whisper_multilingual \
     --feats_normalize "" \
@@ -45,6 +49,6 @@ speed_perturb_factors="0.9 1.0 1.1"
     --asr_speech_fold_length 1024 \
     --asr_text_fold_length 300 \
     --lm_fold_length 300 \
-    --lm_train_text "data/${train_set}/text downloads/sentences-hanlo-cleaned-index.txt downloads/words-hanlo-cleaned-index.txt" "$@" \
-    --asr_args "--max_epoch 100" \
+    --lm_train_text "data/${train_set}/text" "$@" \
+    --asr_args "--max_epoch 10" \
     --local_data_opts "--lang tailo-tone"
