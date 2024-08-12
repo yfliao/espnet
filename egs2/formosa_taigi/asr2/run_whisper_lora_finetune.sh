@@ -23,11 +23,11 @@ use_wordlm=false
 speed_perturb_factors="0.9 1.0 1.1"
 
 ./asr.sh \
-    --nj 64 \
+    --nj 224 \
     --ngpu 8 \
     --gpu_inference true \
-    --inference_nj 1 \
-    --lang zh \
+    --inference_nj 224 \
+    --lang en \
     --token_type whisper_multilingual \
     --feats_normalize "" \
     --audio_format "wav" \
@@ -45,6 +45,6 @@ speed_perturb_factors="0.9 1.0 1.1"
     --asr_speech_fold_length 1024 \
     --asr_text_fold_length 300 \
     --lm_fold_length 300 \
-    --lm_train_text "data/${train_set}/text downloads/sentences-hanlo-cleaned-index.txt downloads/words-hanlo-cleaned-index.txt" "$@" \
-    --asr_args "--max_epoch 100" \
-    --local_data_opts "--lang zh"
+    --lm_train_text "data/${train_set}/text" "$@" \
+    --asr_args "--max_epoch 10" \
+    --local_data_opts "--lang tailo-tone"
