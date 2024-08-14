@@ -87,6 +87,24 @@ pip install nlpaug
 |decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/test|347|5610|93.5|6.1|0.4|0.2|6.7|36.6|
 |org/dev|347|5586|94.9|4.8|0.3|0.2|5.2|34.3|
 
+# Whisper Small LoRA finetune
+## Results
+
+- ASR config: [conf/tuning/train_asr_whisper_small_lora_finetune.yaml](conf/tuning/train_asr_whisper_small_lora_finetune.yaml)
+- Decode config: [conf/tuning/decode_asr_whisper_noctc_beam10.yaml](conf/tuning/decode_asr_whisper_noctc_beam10.yaml)
+- Pretrained Model:
+  - #Trainable Params: 4.72 M
+  - Link: TBD
+
+### WER(有加雜訊)
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/test|347|5102|89.8|6.5|3.6|0.2|10.4|10.4|
+|org/dev|347|5150|92.5|5.0|2.6|0.1|7.7|8.9|
+
+
+
 # Whisper Medium Full Finetune
 ## Results
 
@@ -111,12 +129,12 @@ pip install nlpaug
   - #Trainable Params: 4.72 M
   - Link: TBD
 
-### WER(還沒)
+### WER(有加雜訊)
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/dev|14326|205341|96.9|3.0|0.1|0.1|3.2|27.0|
-|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/test|7176|104765|96.6|3.3|0.1|0.1|3.5|28.8|
+|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/test|347|5099|99.7|0.2|0.1|0.0|0.3|1.4|
+|org/dev|347|5794|96.4|1.2|2.3|0.1|3.7|2.0|
 
 
 # Whisper Large Full Finetune
