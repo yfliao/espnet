@@ -5,15 +5,8 @@ import string
 from zhon.hanzi import punctuation
 from 臺灣言語工具.解析整理.拆文分析器 import 拆文分析器
 from 臺灣言語工具.音標系統.閩南語.臺灣閩南語羅馬字拼音 import 臺灣閩南語羅馬字拼音
-
-# Helper function to recursively find all JSON files in a directory
-def find_json_files(directory):
-    json_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".json"):
-                json_files.append(os.path.join(root, file))
-    return json_files
+import pandas as pd
+import re
 
 def remove_punctuation_except_hyphen(text):
     # Define the Tailo characters
@@ -116,27 +109,41 @@ def clean_text_tailo_numbered(text):
 
 # Main function to process the JSON files
 def process_json_files(directory, subset):
-    json_files = find_json_files(directory+'/'+subset)
+    # 讀取 TSV 文件
+    df = pd.read_csv(directory+subset+"/"+subset+'.tsv', sep='\t')
+    change_subset= None
+    if(subset=='dev'):
+        change_subset ='eval'
+    else:
+        change_subset = subset
     hanlo_lines = []
     tailo_lines = []
     tailo_tone_lines = []
     tailo_toneless_lines = []
+    wav_path=[]
+    speaker=[]
 
-    for json_file in json_files:
-        with open(json_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        parts = json_file.split(os.sep)
-        if len(parts) < 6:
+    for index, row in df.iterrows():
+        parts = len(row)
+        if parts < 16: #not 16 col per row will skip
             continue
-
-        ID = parts[4] + "_" + parts[5]
-        ID = ID.replace('.json','')
-        filepath = json_file
-
-        hanlo = data.get("漢羅台文", "")
-        tailo = data.get("台羅", "")
-        tailo_numbered = data.get("台羅數字調", "")
+        OID=row['id']
+        ID=None
+        # filepath = ID.replace('hok/','')
+        match = re.match(rf"TAT-Vol1-{change_subset}_(\d+_\d+(\.\d+)?)_([A-Za-z0-9]+)_concat", OID)
+        if match:
+            other_part = match.group(1)  # 提取 eval_0009_0 或 eval_0009_0.1 等部分
+            speaker_id = match.group(3)  # 提取 TAM0013 部分
+            
+            # 格式化新的字串
+            ID = f"{speaker_id}_{other_part}"
+        if ID is None:
+            print(OID)
+        hanlo = row['hok_text_hanlo_tai'] #漢羅台文
+        tailo = row['hok_text_tailo'] #台羅
+        tailo_numbered = row['hok_text_tailo_number_tone'] #台羅數字調
+        wav_path.append(f"{ID} downloads/tat_open_source_final/tat_open_source/{subset}/{row['hok_audio']}\n")
+        speaker.append(f"{ID}\t{speaker_id}\n")
 
         hanlo = clean_text_hanlo(hanlo)
         tailo = clean_text_tailo(tailo)
@@ -154,19 +161,23 @@ def process_json_files(directory, subset):
         tailo_tone_lines.append(f"{ID} {tailo_numbered}\n")
         tailo_toneless_lines.append(f"{ID} {tailo_toneless}\n")
 
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
         f.writelines(hanlo_lines)
     
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_lines)
     
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_tone_lines)
     
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_toneless_lines)
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'wav.scp', 'w', encoding='utf-8') as f: 
+        f.writelines(wav_path)
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'utt2spk', 'w', encoding='utf-8') as f:
+        f.writelines(speaker)
 
 # Example usage
-process_json_files('downloads/TAT-MOE-Lavalier','Train')
-process_json_files('downloads/TAT-MOE-Lavalier','Eval')
-process_json_files('downloads/TAT-MOE-Lavalier','Test')
+process_json_files('downloads/tat_open_source_final/tat_open_source/','dev')
+process_json_files('downloads/tat_open_source_final/tat_open_source/','test')
+

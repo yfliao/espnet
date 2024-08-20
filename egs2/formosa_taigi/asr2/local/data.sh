@@ -30,6 +30,8 @@ cd downloads
 
 if [ ! -f TAT-MOE-Lavalier.zip ]; then
 	wget https://tggl.naer.edu.tw/corpus_files/TAT-MOE-Lavalier.zip
+    cp /nfs/RS2416RP/Corpora/TAT-MOE-Lavalier/TAT-MOE-Lavalier.zip .
+
 	unzip TAT-MOE-Lavalier.zip
 fi
 
@@ -48,39 +50,68 @@ if [ ! -f master.zip ]; then
         unzip master.zip
 fi
 
+if [ ! -f tat_open_source_final.zip ]; then
+        wget https://sites.google.com/nycu.edu.tw/sarc/tat_s2st_benchmark/tat_open_source_final.zip #not work
+        unzip tat_open_source_final.zip
+fi
+
+
 cd ..
 
 find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/train/wav.scp
-find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/eval/wav.scp
-find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/test/wav.scp
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' >> data/train/wav.scp
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' >> data/train/wav.scp
 
 find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/train/utt2spk
-find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/eval/utt2spk
-find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/test/utt2spk
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' >> data/train/utt2spk
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' >> data/train/utt2spk
 
 python local/TAT-MOE.py
+python local/tat_open_source_final.py
+
+cp  downloads/tat_open_source_final/tat_open_source/dev/utt2spk data/eval/utt2spk
+sort -t$'\t' -k1,1 data/eval/utt2spk -o data/eval/utt2spk
+cp  downloads/tat_open_source_final/tat_open_source/test/utt2spk data/test/utt2spk
+sort -t$'\t' -k1,1 data/eval/utt2spk -o data/eval/utt2spk
+
+
+cp  downloads/tat_open_source_final/tat_open_source/dev/wav.scp data/eval/wav.scp
+cp  downloads/tat_open_source_final/tat_open_source/test/wav.scp data/test/wav.scp
+
 
 # Your script logic here, using $LANGUAGE
 if [[ "$lang" == "hanlo" ]]; then
     echo "Hanlo"
-    cp data/train/hanlo.txt data/train/text
-    cp data/eval/hanlo.txt data/eval/text
-    cp data/test/hanlo.txt data/test/text
+    cp downloads/TAT-MOE-Lavalier/Train/hanlo.txt data/train/text
+    cat downloads/TAT-MOE-Lavalier/Eval/hanlo.txt >> data/train/text
+    cat downloads/TAT-MOE-Lavalier/Test/hanlo.txt >> data/train/text
+
+    cp  downloads/tat_open_source_final/tat_open_source/dev/hanlo.txt data/eval/text
+    cp  downloads/tat_open_source_final/tat_open_source/test/hanlo.txt data/test/text
 elif [[ "$lang" == "tailo" ]]; then
     echo "Hanlo"
-    cp data/train/tailo.txt data/train/text
-    cp data/eval/tailo.txt data/eval/text
-    cp data/test/tailo.txt data/test/text
+    cp downloads/TAT-MOE-Lavalier/Train/tailo.txt data/train/text
+    cat downloads/TAT-MOE-Lavalier/Eval/tailo.txt >> data/train/text
+    cat downloads/TAT-MOE-Lavalier/Test/tailo.txt >> data/train/text
+
+    cp  downloads/tat_open_source_final/tat_open_source/dev/tailo.txt data/eval/text
+    cp  downloads/tat_open_source_final/tat_open_source/test/tailo.txt data/test/text
 elif [[ "$lang" == "tailo-tone" ]]; then
     echo "Hanlo"
-    cp data/train/tailo-tone.txt data/train/text
-    cp data/eval/tailo-tone.txt data/eval/text
-    cp data/test/tailo-tone.txt data/test/text
+    cp downloads/TAT-MOE-Lavalier/Train/tailo-tone.txt data/train/text
+    cat downloads/TAT-MOE-Lavalier/Eval/tailo-tone.txt >> data/train/text
+    cat downloads/TAT-MOE-Lavalier/Test/tailo-tone.txt >> data/train/text
+
+    cp  downloads/tat_open_source_final/tat_open_source/dev/tailo-tone.txt data/eval/text
+    cp  downloads/tat_open_source_final/tat_open_source/test/tailo-tone.txt data/test/text
 elif [[ "$lang" == "tailo-toneless" ]]; then
     echo "tailo-toneless"
-    cp data/train/tailo-toneless.txt data/train/text
-    cp data/eval/tailo-toneless.txt data/eval/text
-    cp data/test/tailo-toneless.txt data/test/text
+    cp downloads/TAT-MOE-Lavalier/Train/tailo-toneless.txt data/train/text
+    cat downloads/TAT-MOE-Lavalier/Eval/tailo-toneless.txt >> data/train/text
+    cat downloads/TAT-MOE-Lavalier/Test/tailo-toneless.txt >> data/train/text
+
+    cp  downloads/tat_open_source_final/tat_open_source/dev/tailo-toneless data/eval/text
+    cp  downloads/tat_open_source_final/tat_open_source/test/tailo-toneless data/test/text
 else
     echo "Unsupported language: $lang"
     exit 1
