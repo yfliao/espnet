@@ -1,19 +1,10 @@
-import os
+import os, sys
 import json
 import re
 import string
 from zhon.hanzi import punctuation
 from 臺灣言語工具.解析整理.拆文分析器 import 拆文分析器
 from 臺灣言語工具.音標系統.閩南語.臺灣閩南語羅馬字拼音 import 臺灣閩南語羅馬字拼音
-
-# Helper function to recursively find all JSON files in a directory
-def find_json_files(directory):
-    json_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".json"):
-                json_files.append(os.path.join(root, file))
-    return json_files
 
 def remove_punctuation_except_hyphen(text):
     # Define the Tailo characters
@@ -88,7 +79,7 @@ def remove_invalid_tailo(text):
 # Function to remove digits from 台羅數字調
 def remove_tones(text):
     text = re.sub(r'[\d]', '', text.lower())
-    text = re.sub(r'[-]', ' ', text)
+#    text = re.sub(r'[-]', ' ', text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
@@ -109,10 +100,45 @@ def clean_text_tailo(text):
     return text.strip()
 
 # Replace punctuation with space and remove duplicate spaces
+def clean_text_tailo_list(intext):
+    text = []
+    for line in intext:
+        line = re.sub(r"[%s]+" % punctuation, ' ', line.lower())
+        line = remove_invalid_tailo(line)
+        line = re.sub(r'\s+', ' ', line)
+        text.append(line)
+    return text
+
+# Replace punctuation with space and remove duplicate spaces
 def clean_text_tailo_numbered(text):
     text = re.sub(r'[^a-z0-9\s-]', ' ', text.lower())
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
+
+# Replace punctuation with space and remove duplicate spaces
+def clean_text_en(text):
+    text = re.sub(r'[^a-z0-9\s-]', ' ', text.lower())
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+# remove all symbols from a text except for those used in Pe̍h-ōe-jī (POJ)
+def remove_non_poj_symbols(text):
+    # Define the valid POJ character set including diacritics, space, and hyphen
+    valid_poj_pattern = re.compile(r"[a-zA-Zô̍̄́̀̂ṳḿńǹêîâáàûúīíì\- ]+", re.UNICODE)
+    
+    # Find all valid POJ sequences and join them back into a string
+    filtered_text = ''.join(valid_poj_pattern.findall(text))
+    
+    return filtered_text
+
+# Helper function to recursively find all JSON files in a directory
+def find_json_files(directory):
+    json_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".json"):
+                json_files.append(os.path.join(root, file))
+    return json_files
 
 # Main function to process the JSON files
 def process_json_files(directory, subset):
@@ -154,19 +180,23 @@ def process_json_files(directory, subset):
         tailo_tone_lines.append(f"{ID} {tailo_numbered}\n")
         tailo_toneless_lines.append(f"{ID} {tailo_toneless}\n")
 
-    with open("data/"+subset.lower()+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
         f.writelines(hanlo_lines)
     
-    with open("data/"+subset.lower()+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_lines)
     
-    with open("data/"+subset.lower()+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_tone_lines)
     
-    with open("data/"+subset.lower()+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_toneless_lines)
 
 # Example usage
+os.makedirs('data/Train', exist_ok=True);
+os.makedirs('data/Eval', exist_ok=True);
+os.makedirs('data/Test', exist_ok=True);
+
 process_json_files('downloads/TAT-MOE-Lavalier','Train')
 process_json_files('downloads/TAT-MOE-Lavalier','Eval')
 process_json_files('downloads/TAT-MOE-Lavalier','Test')

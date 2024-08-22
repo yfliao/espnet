@@ -3,7 +3,7 @@
 . ./path.sh
 
 # Default language
-lang="en"
+lang="tailo-toneless"
 
 # Parse options
 while [[ "$#" -gt 0 ]]; do
@@ -51,41 +51,67 @@ fi
 cd ..
 
 find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/train/wav.scp
-find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/eval/wav.scp
-find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' > data/test/wav.scp
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' >> data/train/wav.scp
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $1"/"$2"/"$3"/"$4"/"$5"/"$6".wav"}' >> data/train/wav.scp
 
 find downloads/TAT-MOE-Lavalier/Train -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/train/utt2spk
-find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/eval/utt2spk
-find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' > data/test/utt2spk
+find downloads/TAT-MOE-Lavalier/Eval  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' >> data/train/utt2spk
+find downloads/TAT-MOE-Lavalier/Test  -name '*.wav' | tr '/' ' ' | sed 's/.wav//' | awk '{print $5"_"$6, $5}' >> data/train/utt2spk
 
 python local/TAT-MOE.py
 
 # Your script logic here, using $LANGUAGE
 if [[ "$lang" == "hanlo" ]]; then
     echo "Hanlo"
-    cp data/train/hanlo.txt data/train/text
-    cp data/eval/hanlo.txt data/eval/text
-    cp data/test/hanlo.txt data/test/text
+    cat data/Train/hanlo.txt > data/train/text
+    cat data/Eval/hanlo.txt >> data/train/text
+    cat data/Test/hanlo.txt >> data/train/text
 elif [[ "$lang" == "tailo" ]]; then
     echo "Hanlo"
-    cp data/train/tailo.txt data/train/text
-    cp data/eval/tailo.txt data/eval/text
-    cp data/test/tailo.txt data/test/text
+    cat data/Train/tailo.txt > data/train/text
+    cat data/Eval/tailo.txt >> data/train/text
+    cat data/Test/tailo.txt >> data/train/text
 elif [[ "$lang" == "tailo-tone" ]]; then
     echo "Hanlo"
-    cp data/train/tailo-tone.txt data/train/text
-    cp data/eval/tailo-tone.txt data/eval/text
-    cp data/test/tailo-tone.txt data/test/text
+    cat data/Train/tailo-tone.txt > data/train/text
+    cat data/Eval/tailo-tone.txt >> data/train/text
+    cat data/Test/tailo-tone.txt >> data/train/text
 elif [[ "$lang" == "tailo-toneless" ]]; then
     echo "tailo-toneless"
-    cp data/train/tailo-toneless.txt data/train/text
-    cp data/eval/tailo-toneless.txt data/eval/text
-    cp data/test/tailo-toneless.txt data/test/text
+    cat data/Train/tailo-toneless.txt > data/train/text
+    cat data/Eval/tailo-toneless.txt >> data/train/text
+    cat data/Test/tailo-toneless.txt >> data/train/text
 else
     echo "Unsupported language: $lang"
     exit 1
 fi
 
 utils/fix_data_dir.sh data/train
-utils/fix_data_dir.sh data/eval
+
+python local/tat_open_source_final.py
+
+# Your script logic here, using $LANGUAGE
+if [[ "$lang" == "hanlo" ]]; then
+    echo "Hanlo"
+    cat data/dev/hok_text_hanlo_tai.txt > data/dev/text
+    cat data/test/hok_text_hanlo_tai.txt > data/test/text
+elif [[ "$lang" == "tailo" ]]; then
+    echo "Tailo"
+    cat data/dev/hok_text_tailo.txt > data/dev/text
+    cat data/test/hok_text_tailo.txt > data/test/text
+elif [[ "$lang" == "tailo-tone" ]]; then
+    echo "Tailo-Tone"
+    cat data/dev/hok_text_tailo_number_tone.txt > data/dev/text
+    cat data/test/hok_text_tailo_number_tone.txt > data/test/text
+elif [[ "$lang" == "tailo-toneless" ]]; then
+    echo "Tailo-toneless"
+    cat data/dev/hok_text_tailo_toneless.txt > data/dev/text
+    cat data/test/hok_text_tailo_toneless.txt > data/test/text
+else
+    echo "Unsupported language: $lang"
+    exit 1
+fi
+
+utils/fix_data_dir.sh data/dev
 utils/fix_data_dir.sh data/test
+

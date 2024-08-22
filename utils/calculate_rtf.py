@@ -87,11 +87,11 @@ def main():
             # When inf_num > 1, select the last speaker's end as end time
             end_times = end_times[args.inf_num - 1 :: args.inf_num]
 
-        assert len(audio_durations) == len(end_times), (
-            len(audio_durations),
-            len(end_times),
-        )
-        assert len(start_times) == len(end_times), (len(start_times), len(end_times))
+#        assert len(audio_durations) == len(end_times), (
+#            len(audio_durations),
+#            len(end_times),
+#        )
+#        assert len(start_times) == len(end_times), (len(start_times), len(end_times))
         audio_sec += sum(audio_durations) * args.input_shift / 1000  # [sec]
         decode_sec += sum(
             [

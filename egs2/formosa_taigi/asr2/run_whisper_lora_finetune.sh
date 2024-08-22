@@ -7,7 +7,7 @@ set -o pipefail
 
 train_set=train
 valid_set=eval
-test_sets="eval test"
+test_sets="dev test"
 
 #asr_config=conf/tuning/train_asr_whisper_small_lora_finetune.yaml
 #asr_config=conf/tuning/train_asr_whisper_medium_lora_finetune.yaml
@@ -26,7 +26,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --nj 224 \
     --ngpu 8 \
     --gpu_inference true \
-    --inference_nj 224 \
+    --inference_nj 1 \
     --lang en \
     --token_type whisper_multilingual \
     --feats_normalize "" \
@@ -47,4 +47,4 @@ speed_perturb_factors="0.9 1.0 1.1"
     --lm_fold_length 300 \
     --lm_train_text "data/${train_set}/text" "$@" \
     --asr_args "--max_epoch 10" \
-    --local_data_opts "--lang tailo-tone"
+    --local_data_opts "--lang tailo-toneless"
