@@ -180,16 +180,16 @@ def process_json_files(directory, subset):
         tailo_tone_lines.append(f"{ID} {tailo_numbered}\n")
         tailo_toneless_lines.append(f"{ID} {tailo_toneless}\n")
 
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
         f.writelines(hanlo_lines)
     
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_lines)
     
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_tone_lines)
     
-    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
+    with open("data/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_toneless_lines)
 
 # Example usage
