@@ -6,7 +6,7 @@ set -u
 set -o pipefail
 
 train_set=train
-valid_set=eval
+valid_set=dev
 test_sets="dev test"
 
 #asr_config=conf/tuning/train_asr_whisper_small_lora_finetune.yaml
