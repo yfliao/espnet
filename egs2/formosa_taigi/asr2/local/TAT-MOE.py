@@ -169,27 +169,27 @@ def process_json_files(directory, subset):
         tailo_numbered = clean_text_tailo_numbered(tailo_numbered)
         tailo_toneless = remove_tones(tailo_numbered)
 
-        print(f"{filepath}")
-        print(f"{subset} {ID} 漢羅台文: {hanlo}")
-        print(f"{subset} {ID} 台羅: {tailo}")
-        print(f"{subset} {ID} 台羅數字調: {tailo_numbered}")
-        print(f"{subset} {ID} 台羅數字調無聲調: {tailo_toneless}")
+        # print(f"{filepath}")
+        # print(f"{subset} {ID} 漢羅台文: {hanlo}")
+        # print(f"{subset} {ID} 台羅: {tailo}")
+        # print(f"{subset} {ID} 台羅數字調: {tailo_numbered}")
+        # print(f"{subset} {ID} 台羅數字調無聲調: {tailo_toneless}")
 
         hanlo_lines.append(f"{ID} {hanlo}\n")
         tailo_lines.append(f"{ID} {tailo}\n")
         tailo_tone_lines.append(f"{ID} {tailo_numbered}\n")
         tailo_toneless_lines.append(f"{ID} {tailo_toneless}\n")
 
-    with open("data/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
         f.writelines(hanlo_lines)
     
-    with open("data/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_lines)
     
-    with open("data/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_tone_lines)
     
-    with open("data/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
+    with open("downloads/TAT-MOE-Lavalier/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
         f.writelines(tailo_toneless_lines)
 
 # Example usage

@@ -1,5 +1,6 @@
 import os, sys
 import pandas as pd
+import json
 import re
 import string
 from zhon.hanzi import punctuation
@@ -84,159 +85,98 @@ def remove_tones(text):
     return text.strip()
 
 # Replace punctuation with space and remove duplicate spaces
-def clean_text_hanlo_tai(intext):
-    text = []
-    for line in intext:
-        ID, line = line.split(" ", 1)
-        line = re.sub(r"[%s]+" % punctuation, ' ', line.lower())
-        line = remove_punctuation_except_hyphen(line)
-        line = re.sub(r'\s+', ' ', line)
-        line = remove_spaces_between_cjk_and_tailo(line)
-        text.append(ID+" "+line.strip())
-    return text
-
-### Replace punctuation with space and remove duplicate spaces
-def clean_text_tailo(intext):
-    text = []
-    for line in intext:
-        ID, line = line.split(" ", 1)
-        line = re.sub(r"[%s]+" % punctuation, ' ', line.lower())
-        line = remove_invalid_tailo(line)
-        line = re.sub(r'\s+', ' ', line)
-        text.append(ID+" "+line.strip())
-    return text
-
-### Replace punctuation with space and remove duplicate spaces
-def clean_text_tailo_number_tone(intext):
-    text = []
-    for line in intext:
-        ID, line = line.split(" ", 1)
-        line = re.sub(r'[^a-z0-9\s-]', ' ', line.lower())
-        line = re.sub(r'\s+', ' ', line)
-        text.append(ID+" "+line.strip())
-    return text
-
-### Replace punctuation with space and remove duplicate spaces
-def clean_text_tailo_toneless(intext):
-    text = []
-    for line in intext:
-        ID, line = line.split(" ", 1)
-        line = re.sub(r'[0-9]', '', line.lower())
-        line = re.sub(r'[^a-z\s-]', ' ', line.lower())
-        line = re.sub(r'\s+', ' ', line)
-        text.append(ID+" "+line.strip())
-    return text
+def clean_text_hanlo(text):
+    text = re.sub(r"[%s]+" % punctuation, ' ', text.lower())
+    text = remove_punctuation_except_hyphen(text)
+    text = re.sub(r'\s+', ' ', text)
+    text = remove_spaces_between_cjk_and_tailo(text)
+    return text.strip()
 
 # Replace punctuation with space and remove duplicate spaces
-def clean_text_en(intext):
+def clean_text_tailo(text):
+    text = re.sub(r"[%s]+" % punctuation, ' ', text.lower())
+#    text = re.sub(r"[%s]+" % string.punctuation, ' ', text)
+    text = remove_invalid_tailo(text)
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
 
-    text = []
-    for line in intext:
-        ID, line = line.split(" ", 1)
-        line = re.sub(r'[^a-z0-9\s-]', ' ', line.lower())
-        line = re.sub(r'\s+', ' ', line)
-        text.append(ID+" "+line.strip())
-    return text
+# Replace punctuation with space and remove duplicate spaces
+def clean_text_tailo_numbered(text):
+    text = re.sub(r'[^a-z0-9\s-]', ' ', text.lower())
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
 
-# remove all symbols from a text except for those used in Pe̍h-ōe-jī (POJ)
-def clean_text_pei_oe_ji(intext):
-    # Define the valid POJ character set including diacritics, space, and hyphen
-    valid_poj_pattern = re.compile(r"[a-zA-Zô̍̄́̀̂ṳḿńǹêîâáàûúīíì\- ]+", re.UNICODE)
-    
-    # Find all valid POJ sequences and join them back into a string
-    text = []
-    for line in intext:
-        ID, line = line.split(" ", 1)
-        linw = ''.join(valid_poj_pattern.findall(line.lower()))
-        text.append(ID+" "+line.strip())
-    return text
+# Main function to process the JSON files
+def process_json_files(directory, subset):
+    # 讀取 TSV 文件
+    df = pd.read_csv(directory+subset+"/"+subset+'.tsv', sep='\t')
+    change_subset= None
+    if(subset=='dev'):
+        change_subset ='eval'
+    else:
+        change_subset = subset
+    hanlo_lines = []
+    tailo_lines = []
+    tailo_tone_lines = []
+    tailo_toneless_lines = []
+    wav_path=[]
+    speaker=[]
 
-def extract_id(input_string):
-    # Split the string by underscores
-    parts = input_string.split('_')
-    
-    # Extract the required parts
-    part_1 = parts[3]  # This is 'TSM013'
-    part_2 = parts[1] + '-' + parts[2]  # This is '0034_6.8'
-    
-    # Combine the parts to form the ID
-    final_id = f"{part_1}-{part_2}"
-    
-    return final_id
-
-# Function to create Kaldi-style files
-def create_kaldi_files(tsv_file, subset):
-    # Load the TSV file
-    df = pd.read_csv(tsv_file, sep='\t')
-
-    # Prepare output files
-    wav_scp = []
-    utt2spk = []
-    text_files = {
-        'hok_text_tailo': [],
-        'hok_text_tailo_number_tone': [],
-        'hok_text_hanlo_tai': [],
-        'hok_text_pei_oe_ji': [],
-        'en_text': []
-    }
-
-    # Process each row in the dataframe
     for index, row in df.iterrows():
+        parts = len(row)
+        if parts < 16: #not 16 col per row will skip
+            continue
+        OID=row['id']
+        ID=None
+        # filepath = ID.replace('hok/','')
+        match = re.match(rf"TAT-Vol1-{change_subset}_(\d+_\d+(\.\d+)?)_([A-Za-z0-9]+)_concat", OID)
+        if match:
+            other_part = match.group(1)  # 提取 eval_0009_0 或 eval_0009_0.1 等部分
+            speaker_id = match.group(3)  # 提取 TAM0013 部分
+            
+            # 格式化新的字串
+            ID = f"{speaker_id}_{other_part}"
+        if ID is None:
+            print(OID)
+        hanlo = row['hok_text_hanlo_tai'] #漢羅台文
+        tailo = row['hok_text_tailo'] #台羅
+        tailo_numbered = row['hok_text_tailo_number_tone'] #台羅數字調
+        wav_path.append(f"{ID} downloads/tat_open_source_final/tat_open_source/{subset}/{row['hok_audio']}\n")
+        speaker.append(f"{ID}\t{speaker_id}\n")
 
-        utt_id = extract_id(row['id'])
-        hok_audio = row['hok_audio']
-        hok_speaker = row['hok_speaker']
+        hanlo = clean_text_hanlo(hanlo)
+        tailo = clean_text_tailo(tailo)
+        tailo_numbered = clean_text_tailo_numbered(tailo_numbered)
+        tailo_toneless = remove_tones(tailo_numbered)
 
-        # Create wav.scp line
-        wav_scp.append(f"{utt_id} downloads/tat_open_source_final/tat_open_source/{subset}/{hok_audio}")
+        # print(f"{filepath}")
+        # print(f"{subset} {ID} 漢羅台文: {hanlo}")
+        # print(f"{subset} {ID} 台羅: {tailo}")
+        # print(f"{subset} {ID} 台羅數字調: {tailo_numbered}")
+        # print(f"{subset} {ID} 台羅數字調無聲調: {tailo_toneless}")
 
-        # Create utt2spk line
-        utt2spk.append(f"{utt_id} {hok_speaker}")
+        hanlo_lines.append(f"{ID} {hanlo}\n")
+        tailo_lines.append(f"{ID} {tailo}\n")
+        tailo_tone_lines.append(f"{ID} {tailo_numbered}\n")
+        tailo_toneless_lines.append(f"{ID} {tailo_toneless}\n")
 
-        # Create text lines for each text column
-        for key in text_files:
-            text_files[key].append(f"{utt_id} {row[key]}")        
-            print(utt_id, key, row[key])
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'hanlo.txt', 'w', encoding='utf-8') as f:
+        f.writelines(hanlo_lines)
     
-    # Write files to output directory
-    output_dir= "data/" + subset
-    os.makedirs(output_dir, exist_ok=True)
-
-    with open(os.path.join(output_dir, 'wav.scp'), 'w') as f:
-        f.write('\n'.join(wav_scp) + '\n')
-
-    with open(os.path.join(output_dir, 'utt2spk'), 'w') as f:
-        f.write('\n'.join(utt2spk) + '\n')
-
-    for key, lines in text_files.items():
-        if   key == "hok_text_tailo":
-            lines = clean_text_tailo(lines)
-        elif key == "hok_text_tailo_number_tone":
-            lines = clean_text_tailo_number_tone(lines)
-        elif key == "hok_text_hanlo_tai":
-            lines = clean_text_hanlo_tai(lines)
-        elif key == "hok_text_pei_oe_ji":
-            lines = clean_text_pei_oe_ji(lines)
-        elif key == "en_text":
-            lines = clean_text_en(lines)
-        else:
-            print ("not support")
-            exit(-1)
-        with open(os.path.join(output_dir, f'{key}.txt'), 'w') as f:
-            f.write('\n'.join(lines) + '\n')
-
-    for key, lines in text_files.items():
-        if key == "hok_text_tailo_number_tone":
-            lines = clean_text_tailo_toneless(lines)
-            key1 =  "hok_text_tailo_toneless"
-            with open(os.path.join(output_dir, f'{key1}.txt'), 'w') as f:
-                f.write('\n'.join(lines) + '\n')
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'tailo.txt', 'w', encoding='utf-8') as f:
+        f.writelines(tailo_lines)
+    
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'tailo-tone.txt', 'w', encoding='utf-8') as f:
+        f.writelines(tailo_tone_lines)
+    
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'tailo-toneless.txt', 'w', encoding='utf-8') as f:
+        f.writelines(tailo_toneless_lines)
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'wav.scp', 'w', encoding='utf-8') as f: 
+        f.writelines(wav_path)
+    with open("downloads/tat_open_source_final/tat_open_source/"+subset+'/'+'utt2spk', 'w', encoding='utf-8') as f:
+        f.writelines(speaker)
 
 # Example usage
-tsv_file = 'downloads/tat_open_source_final/tat_open_source/dev/dev.tsv'  # Replace with the path to your TSV file
-subset = 'dev'  # Directory to save the Kaldi-style files
-create_kaldi_files(tsv_file, subset)
+process_json_files('downloads/tat_open_source_final/tat_open_source/','dev')
+process_json_files('downloads/tat_open_source_final/tat_open_source/','test')
 
-tsv_file = 'downloads/tat_open_source_final/tat_open_source/test/test.tsv'  # Replace with the path to your TSV file
-subset = 'test'  # Directory to save the Kaldi-style files
-create_kaldi_files(tsv_file, subset)
