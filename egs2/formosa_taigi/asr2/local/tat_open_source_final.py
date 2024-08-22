@@ -196,7 +196,7 @@ def create_kaldi_files(tsv_file, subset):
         # Create text lines for each text column
         for key in text_files:
             text_files[key].append(f"{utt_id} {row[key]}")        
-            print(utt_id, key, row[key])
+#            print(utt_id, key, row[key])
     
     # Write files to output directory
     output_dir= "data/" + subset
