@@ -83,12 +83,28 @@ def remove_tones(text):
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
+
+import re
+
+def add_space_cjk(text):
+    # This regular expression will match any CJK character
+    cjk_pattern = re.compile(r'([\u4E00-\u9FFF\u3400-\u4DBF\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF])')
+    # Add spaces around each CJK character
+    spaced_text = cjk_pattern.sub(r' \1 ', text)
+    # Remove any extra spaces introduced at the start or end
+    spaced_text = spaced_text.strip()
+    # Replace multiple spaces with a single space
+    spaced_text = re.sub(' +', ' ', spaced_text)
+    return spaced_text
+
 # Replace punctuation with space and remove duplicate spaces
 def clean_text_hanlo(text):
     text = re.sub(r"[%s]+" % punctuation, ' ', text.lower())
     text = remove_punctuation_except_hyphen(text)
+    text = add_space_cjk(text)
+    text = re.sub(r'-', ' ', text)
     text = re.sub(r'\s+', ' ', text)
-    text = remove_spaces_between_cjk_and_tailo(text)
+#    text = remove_spaces_between_cjk_and_tailo(text)
     return text.strip()
 
 # Replace punctuation with space and remove duplicate spaces

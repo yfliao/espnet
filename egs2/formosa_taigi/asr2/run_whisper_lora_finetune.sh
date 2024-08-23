@@ -25,9 +25,9 @@ speed_perturb_factors="0.9 1.0 1.1"
 ./asr.sh \
     --nj 224 \
     --ngpu 8 \
-    --gpu_inference true \
-    --inference_nj 1 \
-    --lang en \
+    --gpu_inference false \
+    --inference_nj 128 \
+    --lang zh-TW \
     --token_type whisper_multilingual \
     --feats_normalize "" \
     --audio_format "wav" \
@@ -47,4 +47,4 @@ speed_perturb_factors="0.9 1.0 1.1"
     --lm_fold_length 300 \
     --lm_train_text "data/${train_set}/text" "$@" \
     --asr_args "--max_epoch 10" \
-    --local_data_opts "--lang tailo-toneless"
+    --local_data_opts "--lang hanlo"
