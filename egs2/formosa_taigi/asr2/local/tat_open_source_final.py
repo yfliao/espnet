@@ -200,17 +200,21 @@ def create_kaldi_files(tsv_file, subset):
         utt_id = extract_id(row['id'])
         hok_audio = row['hok_audio']
         hok_speaker = row['hok_speaker']
+        hok_duration = row['hok_duration']
 
-        # Create wav.scp line
-        wav_scp.append(f"{utt_id} downloads/tat_open_source_final/tat_open_source/{subset}/{hok_audio}")
+        if hok_duration < 30:
+            # Create wav.scp line
+            wav_scp.append(f"{utt_id} downloads/tat_open_source_final/tat_open_source/{subset}/{hok_audio}")
 
-        # Create utt2spk line
-        utt2spk.append(f"{utt_id} {hok_speaker}")
+            # Create utt2spk line
+            utt2spk.append(f"{utt_id} {hok_speaker}")
 
-        # Create text lines for each text column
-        for key in text_files:
-            text_files[key].append(f"{utt_id} {row[key]}")        
-#            print(utt_id, key, row[key])
+            # Create text lines for each text column
+            for key in text_files:
+                text_files[key].append(f"{utt_id} {row[key]}")        
+#       	print(utt_id, key, row[key])
+        else:
+            print("Ignore long utterance: {utt_id}, {hok_audio}, {hok_duration} =", utt_id, hok_audio, hok_duration)
     
     # Write files to output directory
     output_dir= "data/" + subset
