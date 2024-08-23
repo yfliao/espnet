@@ -11,7 +11,7 @@ test_sets=test
 
 #asr_config=conf/tuning/train_asr_whisper_small_lora_finetune.yaml
 #asr_config=conf/tuning/train_asr_whisper_medium_lora_finetune.yaml
-asr_config=conf/tuning/train_asr_whisper_large_lora_finetune.yaml
+asr_config=conf/tuning/train_asr_whisper_large_lora_finetune_en.yaml
 inference_config=conf/tuning/decode_asr_whisper_noctc_beam10.yaml
 
 lm_config=conf/train_lm_transformer.yaml
@@ -27,7 +27,7 @@ speed_perturb_factors="0.9 1.0 1.1"
     --ngpu 8 \
     --gpu_inference false \
     --inference_nj 128 \
-    --lang zh-TW \
+    --lang en \
     --token_type whisper_multilingual \
     --feats_normalize "" \
     --audio_format "wav" \
@@ -47,4 +47,4 @@ speed_perturb_factors="0.9 1.0 1.1"
     --lm_fold_length 300 \
     --lm_train_text "data/${train_set}/text" "$@" \
     --asr_args "--max_epoch 3" \
-    --local_data_opts "--lang hailo"
+    --local_data_opts "--lang tailo"
