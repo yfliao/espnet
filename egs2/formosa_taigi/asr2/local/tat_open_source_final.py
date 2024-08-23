@@ -116,6 +116,7 @@ def clean_text_tailo(intext):
         ID, line = line.split(" ", 1)
         line = re.sub(r"[%s]+" % punctuation, ' ', line.lower())
         line = remove_invalid_tailo(line)
+        line = re.sub(r'-', ' ', line)
         line = re.sub(r'\s+', ' ', line)
         text.append(ID+" "+line.strip())
     return text
@@ -126,6 +127,7 @@ def clean_text_tailo_number_tone(intext):
     for line in intext:
         ID, line = line.split(" ", 1)
         line = re.sub(r'[^a-z0-9\s-]', ' ', line.lower())
+        line = re.sub(r'-', ' ', line)
         line = re.sub(r'\s+', ' ', line)
         text.append(ID+" "+line.strip())
     return text
@@ -137,6 +139,7 @@ def clean_text_tailo_toneless(intext):
         ID, line = line.split(" ", 1)
         line = re.sub(r'[0-9]', '', line.lower())
         line = re.sub(r'[^a-z\s-]', ' ', line.lower())
+        line = re.sub(r'-', ' ', line.lower())
         line = re.sub(r'\s+', ' ', line)
         text.append(ID+" "+line.strip())
     return text

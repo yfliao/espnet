@@ -79,7 +79,7 @@ def remove_invalid_tailo(text):
 # Function to remove digits from 台羅數字調
 def remove_tones(text):
     text = re.sub(r'[\d]', '', text.lower())
-#    text = re.sub(r'[-]', ' ', text)
+    text = re.sub(r'-', ' ', text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
@@ -112,6 +112,7 @@ def clean_text_tailo(text):
     text = re.sub(r"[%s]+" % punctuation, ' ', text.lower())
 #    text = re.sub(r"[%s]+" % string.punctuation, ' ', text)
     text = remove_invalid_tailo(text)
+    text = re.sub(r'-', ' ', text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
@@ -128,6 +129,7 @@ def clean_text_tailo_list(intext):
 # Replace punctuation with space and remove duplicate spaces
 def clean_text_tailo_numbered(text):
     text = re.sub(r'[^a-z0-9\s-]', ' ', text.lower())
+    text = re.sub(r'-', ' ', text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
