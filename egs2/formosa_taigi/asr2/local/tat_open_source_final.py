@@ -205,7 +205,7 @@ def create_kaldi_files(tsv_file, subset):
         hok_speaker = row['hok_speaker']
         hok_duration = row['hok_duration']
 
-        if hok_duration < 30:
+        if hok_duration <= 29.5:
             # Create wav.scp line
             wav_scp.append(f"{utt_id} downloads/tat_open_source_final/tat_open_source/{subset}/{hok_audio}")
 
