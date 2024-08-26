@@ -1,4 +1,17 @@
-# ESPnet 台灣閩南語
+# ESPnet 台灣台語
+
+
+\[ [English](README.md) | 中文 \]
+
+## Introduction
+目的:
+
+提供一個自動化的台灣台語的訓練流程給大家使用，使用我們提供的程式碼可以自動下載資料集，然後使用指定的模型訓練出台灣台語模型，在最後會有驗證和測試並把結果輸出出來。
+
+實驗:
+
+採用的是來自我們實驗室SARC 所公開出的**TAT-MOE** 和 **Meta TAT_s2st_benchmark** ，我們將資料集整理。每個實驗模型皆訓練`max epochs 3` 並且依造進行驗證和測試 
+
 ## 環境
 - date: `Tue Aug 6 15:40:32 CDT 2024`
 - python version: `3.9.18 (main, Sep 11 2023, 13:41:44)  [GCC 11.2.0]`
@@ -31,6 +44,10 @@ pip install zhon
 ```
 台灣言語工具參考網址[link](https://i3thuan5.github.io/tai5-uan5_gian5-gi2_kang1-ku7/%E5%AE%89%E8%A3%9D.html) \
 zhon參考網址[link](https://pypi.org/project/zhon/)
+
+>[!IMPORTANT]
+>
+>TAT-MOE的三個資料夾會做為訓練資料，而驗證和測試資料是META TAT_ s2st_benchmark
 
 ## 語料
 **TAT(Taiwanese Across Taiwan)為台語朗讀語料（reading speech）**，是以原生台文文本，收集來自台灣各地不同腔調的台語語音，並同時以6隻麥克風進行錄製。錄好的台語語音，經由兩次人工校正文本後，整理成可供語音辨認技術研究與開發使用之語音語料庫。\
@@ -97,6 +114,39 @@ zhon參考網址[link](https://pypi.org/project/zhon/)
 }
 ```
 更多有關語料庫的資訊請去SARC網站[台語朗讀語料](https://sites.google.com/speech.ntut.edu.tw/fsw/home/tat-corpus)
+
+**Meta TAT_s2st_benchmark**  這是第一個台灣台語-英語並行語音資料集，可用於對台語<->英語語音到語音翻譯系統進行基準測試。
+該資料集是根據TAT-Vol1-eval-lavalier （開發）和TAT-Vol1-test-lavalier （測試）創建的，其中包含台灣閩南語的錄音和文字記錄。
+Meta AI創建資料集時，首先將相鄰句子連接起來形成更長的話語，透過閩英雙語將閩南文本轉錄成英語，並用真人聲音記錄英語翻譯。
+
+**Meta TAT_s2st_benchmark** 主要分為兩個資料夾:
+- Dev
+- Test 
+
+|dataset|資料量|演講者數量|
+|---|---|---|
+|dev-eng|722|10(5M,5F)|
+|dev-hok|722|10(8M,2F)|
+|test-eng|686|10(5M,5F)|
+|test-hok|686|10(3M,7F)|
+
+**麥克風(microphones)** 資訊: 
+- 領夾式麥克風（lavalier）
+
+**音檔（wav）** 格式:
+- 音檔格式： *.wav
+
+**文本格式** :
+- 文件格式： *.tsv
+
+```Tsv
+id	hok_audio	hok_duration	hok_speaker	hok_accent	hok_accent_english_label	hok_gender	hok_text_tailo	hok_text_tailo_number_tone	hok_text_hanlo_tai	hok_text_pei_oe_ji	en_text	en_speaker	en_gender	en_audio	en_duration
+
+```
+**TAT_S2ST_Benchmark is released under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license**
+
+更多有關語料庫的資訊請去SARC網站[TAT_s2st_benchmark](https://sites.google.com/nycu.edu.tw/sarc/tat_s2st_benchmark)
+
 ## 模型使用&腳本
 - Transformer
   - [run.sh](https://github.com/yfliao/espnet/blob/master/egs2/formosa_taigi/asr2/run.sh)

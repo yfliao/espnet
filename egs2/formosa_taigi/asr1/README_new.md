@@ -1,9 +1,24 @@
 # ESPnet台灣台語
+\[ [English](README.md) | 中文 \]
+## Introduction
+目的:
+
+提供一個自動化的訓練流程給大家使用，使用我們提供的程式碼可以自動下載資料集並且執行加雜訊和擴充資料集，最後使用指定的模型訓練出台灣台語模型，在最後會有驗證和測試並把結果輸出出來。
+
+實驗:
+
+採用的是來自意傳公司的臺灣媠聲資料集，我們將資料集增加一倍雜訊進行訓練，每個實驗模型皆訓練`max epochs 30` 並且依造資料分割0.9 0.05 0.05 進行訓練和測試  
+
 ## Environments
 - date: `Tue Aug 6 15:40:32 CDT 2024`
 - python version: `3.9.18 (main, Sep 11 2023, 13:41:44)  [GCC 11.2.0]`
 - espnet version: `espnet 202308`
 - pytorch version: `pytorch 1.13.1`
+
+>[!NOTE]
+>
+>請依照指示安裝，安裝程序錯誤可能會導致程式無法運行
+
 ## 安裝
 請參考[ESPnet_install](https://espnet.github.io/espnet/installation.html)依照指示進行安裝，接著請安裝kenlm，這個在ESPnet安裝指示沒有提到，如果不安裝腳本執行會失敗
 ```bash
@@ -159,11 +174,12 @@ pip install nlpaug
   - #Trainable Params: 7.86 M
   - Link: TBD
 
-### WER(還沒)
+### WER(有加雜訊)
 
 |dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
 |---|---|---|---|---|---|---|---|---|
-|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/dev|14326|205341|97.6|2.3|0.1|0.1|2.5|22.4|
-|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/test|7176|104765|97.3|2.6|0.1|0.1|2.7|23.9|
+|decode_asr_whisper_noctc_beam10_asr_model_valid.acc.ave/test|347|5099|95.2|3.9|0.9|0.5|5.2|9.5|
+|org/dev|347|5794|92.5|5.1|2.4|0.9|8.5|12.1|
+
 
 
