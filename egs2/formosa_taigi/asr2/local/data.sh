@@ -28,12 +28,11 @@ mkdir -p data/train data/eval data/test
 mkdir -p downloads
 cd downloads
 
-if [ ! -f TAT-MOE-Lavalier.zip ]; then
-	wget https://tggl.naer.edu.tw/corpus_files/TAT-MOE-Lavalier.zip
-    cp /nfs/RS2416RP/Corpora/TAT-MOE-Lavalier/TAT-MOE-Lavalier.zip .
-
-	unzip TAT-MOE-Lavalier.zip
-fi
+#if [ ! -f TAT-MOE-Lavalier.zip ]; then
+#	wget https://tggl.naer.edu.tw/corpus_files/TAT-MOE-Lavalier.zip
+#	#cp /nfs/RS2416RP/Corpora/TAT-MOE-Lavalier/TAT-MOE-Lavalier.zip .
+#	unzip TAT-MOE-Lavalier.zip
+#fi
 
 if [ ! -f musan.tar.gz ]; then
 	wget https://www.openslr.org/resources/17/musan.tar.gz
@@ -50,10 +49,10 @@ if [ ! -f master.zip ]; then
         unzip master.zip
 fi
 
-if [ ! -f tat_open_source_final.zip ]; then
-        wget https://sites.google.com/nycu.edu.tw/sarc/tat_s2st_benchmark/tat_open_source_final.zip #not work
-        unzip tat_open_source_final.zip
-fi
+#if [ ! -f tat_open_source_final.zip ]; then
+#        wget https://sites.google.com/nycu.edu.tw/sarc/tat_s2st_benchmark/tat_open_source_final.zip #not work
+#        unzip tat_open_source_final.zip
+#fi
 
 
 cd ..
